@@ -4,6 +4,9 @@ public class Senha {
 
     private String valor;
 
+    public Senha() {
+    }
+
     public Senha(String valor) {
         if (validarSenha(valor)) {
             this.valor = valor;

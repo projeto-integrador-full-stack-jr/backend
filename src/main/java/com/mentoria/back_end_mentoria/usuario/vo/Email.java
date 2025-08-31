@@ -4,9 +4,14 @@ public class Email {
 
     private String email;
 
+    public Email() {
+    }
+
     public Email(String email) {
         if (isEmailValido(email)) {
             this.email = email;
+        } else {
+            throw new IllegalArgumentException("O email deve ter um dominio valido");
         }
     }
 
@@ -16,10 +21,6 @@ public class Email {
 
     private boolean isEmailValido(String email) {
         if (email == null) return false;
-        try {
-            return email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+        return email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
     }
 }
