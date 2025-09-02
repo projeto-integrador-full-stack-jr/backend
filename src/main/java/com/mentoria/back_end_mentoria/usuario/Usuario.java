@@ -27,11 +27,11 @@ public class Usuario implements Serializable {
     @Embedded
     private Senha senha;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario")
     private List<Meta> metas = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Nota> notas = new ArrayList<>();
+    @OneToMany(mappedBy = "usuario")
+    private List<Nota> notas = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
@@ -74,9 +74,9 @@ public class Usuario implements Serializable {
         return metas;
     }
 
-//    public List<Nota> getNotas() {
-//        return notas;
-//    }
+    public List<Nota> getNotas() {
+        return notas;
+    }
 
     public Instant getCreatedAt() {
         return createdAt;

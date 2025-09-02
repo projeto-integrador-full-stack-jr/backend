@@ -6,6 +6,9 @@ public class Prazo {
 
     private Instant prazo;
 
+    public Prazo() {
+    }
+
     public Prazo(Instant prazo) {
         if (prazo == null) {
             throw new IllegalArgumentException("O prazo não pode ser nulo.");

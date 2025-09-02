@@ -1,8 +1,11 @@
-package com.mentoria.back_end_mentoria.meta.vo;
+package com.mentoria.back_end_mentoria.vog;
 
 public class Titulo {
 
     private String titulo;
+
+    public Titulo() {
+    }
 
     public Titulo(String titulo) {
         if (!isTituloValido(titulo)) {

@@ -2,7 +2,7 @@ package com.mentoria.back_end_mentoria.meta;
 
 import com.mentoria.back_end_mentoria.meta.vo.Prazo;
 import com.mentoria.back_end_mentoria.meta.vo.StatusMeta;
-import com.mentoria.back_end_mentoria.meta.vo.Titulo;
+import com.mentoria.back_end_mentoria.vog.Titulo;
 import com.mentoria.back_end_mentoria.usuario.Usuario;
 import jakarta.persistence.*;
 
@@ -18,7 +18,7 @@ public class Meta implements Serializable {
     private UUID metaId;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     @Embedded
