@@ -1,5 +1,6 @@
 package com.mentoria.back_end_mentoria.resumo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
@@ -15,6 +16,7 @@ public class Resumo implements Serializable {
     @Id
     private UUID resumoId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "perfilProfissional_id")
     private PerfilProfissional perfilId;

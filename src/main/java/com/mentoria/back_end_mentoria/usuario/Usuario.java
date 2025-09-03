@@ -27,11 +27,14 @@ public class Usuario implements Serializable {
     @Embedded
     private Senha senha;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<Meta> metas = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario")
     private List<Nota> notas = new ArrayList<>();
+
 
     @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
