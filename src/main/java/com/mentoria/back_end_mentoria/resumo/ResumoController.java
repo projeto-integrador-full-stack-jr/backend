@@ -17,18 +17,42 @@ public class ResumoController {
     private ResumoService resumoService;
 
     @GetMapping
-    public ResponseEntity<List<Resumo>> findAll() {
-        List<Resumo> lista = resumoService.findAll();
+    public ResponseEntity<List<ResumoDTO>> findAll() {
+        List<ResumoDTO> lista = resumoService.findAll();
         return ResponseEntity.ok().body(lista);
     }
 
-    @PostMapping(value = "/novoResumo")
-    public ResponseEntity<Resumo> insert(@RequestParam UUID perfilID) {
-        Resumo resumo = resumoService.criarResumoIA(perfilID);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(resumo.getResumoId()).toUri();
-        return ResponseEntity.created(uri).body(resumo);
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ResumoDTO> findById(@PathVariable UUID id) {
+        ResumoDTO dto = resumoService.findById(id);
+        return ResponseEntity.ok().body(dto);
     }
 
+    @PostMapping
+    public ResponseEntity<ResumoDTO> insert(@RequestBody ResumoDTO dto) {
+        dto = resumoService.insert(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(dto.getResumoId()).toUri();
+        return ResponseEntity.created(uri).body(dto);
+    }
 
+    @PostMapping(value = "/gerar-resumo-ia")
+    public ResponseEntity<ResumoDTO> criarResumoIA(@RequestParam UUID perfilId) {
+        ResumoDTO novoResumoDto = resumoService.criarResumoIA(perfilId);
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/resumos/{id}")
+                .buildAndExpand(novoResumoDto.getResumoId()).toUri();
+        return ResponseEntity.created(uri).body(novoResumoDto);
+    }
+
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<ResumoDTO> update(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
+        dto = resumoService.update(id, dto);
+        return ResponseEntity.ok().body(dto);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        resumoService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -19,7 +19,7 @@ public class Resumo implements Serializable {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "perfilProfissional_id")
-    private PerfilProfissional perfilId;
+    private PerfilProfissional perfilProfissional;
 
     @Embedded
     private Titulo titulo;
@@ -30,12 +30,14 @@ public class Resumo implements Serializable {
     public Resumo() {
     }
 
-    public Resumo(UUID resumoId, PerfilProfissional perfilId, Titulo titulo, Conteudo conteudo) {
+    public Resumo(UUID resumoId, PerfilProfissional perfilProfissional, Titulo titulo, Conteudo conteudo) {
         this.resumoId = resumoId;
-        this.perfilId = perfilId;
+        this.perfilProfissional = perfilProfissional;
         this.titulo = titulo;
         this.conteudo = conteudo;
     }
+
+    // Getters and Setters
 
     public UUID getResumoId() {
         return resumoId;
@@ -45,12 +47,12 @@ public class Resumo implements Serializable {
         this.resumoId = resumoId;
     }
 
-    public PerfilProfissional getPerfilId() {
-        return perfilId;
+    public PerfilProfissional getPerfilProfissional() {
+        return perfilProfissional;
     }
 
-    public void setPerfilId(PerfilProfissional perfilId) {
-        this.perfilId = perfilId;
+    public void setPerfilProfissional(PerfilProfissional perfilProfissional) {
+        this.perfilProfissional = perfilProfissional;
     }
 
     public Titulo getTitulo() {

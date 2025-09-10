@@ -1,48 +1,38 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
-import com.mentoria.back_end_mentoria.resumo.Resumo;
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import jakarta.persistence.*;
+import com.mentoria.back_end_mentoria.resumo.ResumoDTO;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "tb_perfilProfissional")
-public class PerfilProfissional implements Serializable {
+public class PerfilProfissionalDTO implements Serializable {
 
-    @Id
     private UUID perfilId;
-
-    @OneToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
-
+    private UUID usuarioId;
     private String nomeUsuario;
     private String cargo;
     private String carreira;
     private String experiencia;
     private String objetivoPrincipal;
+    private List<ResumoDTO> resumos;
 
-    @OneToMany(mappedBy = "perfilProfissional", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Resumo> resumos = new ArrayList<>();
-
-    public PerfilProfissional() {
+    public PerfilProfissionalDTO() {
     }
 
-    public PerfilProfissional(UUID perfilId, Usuario usuario, String nomeUsuario, String cargo, String carreira, String experiencia, String objetivoPrincipal) {
-        this.perfilId = perfilId;
-        this.usuario = usuario;
-        this.nomeUsuario = nomeUsuario;
-        this.cargo = cargo;
-        this.carreira = carreira;
-        this.experiencia = experiencia;
-        this.objetivoPrincipal = objetivoPrincipal;
+    public PerfilProfissionalDTO(PerfilProfissional entity) {
+        this.perfilId = entity.getPerfilId();
+        this.usuarioId = (entity.getUsuario() != null) ? entity.getUsuario().getUsuarioId() : null;
+        this.nomeUsuario = entity.getNomeUsuario();
+        this.cargo = entity.getCargo();
+        this.carreira = entity.getCarreira();
+        this.experiencia = entity.getExperiencia();
+        this.objetivoPrincipal = entity.getObjetivoPrincipal();
+        this.resumos = entity.getResumos().stream().map(ResumoDTO::new).collect(Collectors.toList());
     }
 
-    // Getters and Setters
+    // Getters e Setters para todos os campos
 
     public UUID getPerfilId() {
         return perfilId;
@@ -52,12 +42,12 @@ public class PerfilProfissional implements Serializable {
         this.perfilId = perfilId;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public UUID getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuarioId(UUID usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getNomeUsuario() {
@@ -100,11 +90,11 @@ public class PerfilProfissional implements Serializable {
         this.objetivoPrincipal = objetivoPrincipal;
     }
 
-    public List<Resumo> getResumos() {
+    public List<ResumoDTO> getResumos() {
         return resumos;
     }
 
-    public void setResumos(List<Resumo> resumos) {
+    public void setResumos(List<ResumoDTO> resumos) {
         this.resumos = resumos;
     }
 }
