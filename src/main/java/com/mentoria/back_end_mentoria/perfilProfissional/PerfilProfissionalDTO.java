@@ -1,5 +1,7 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
+import com.mentoria.back_end_mentoria.meta.MetaDTO;
+import com.mentoria.back_end_mentoria.nota.NotaDTO;
 import com.mentoria.back_end_mentoria.resumo.ResumoDTO;
 
 import java.io.Serializable;
@@ -17,6 +19,8 @@ public class PerfilProfissionalDTO implements Serializable {
     private String experiencia;
     private String objetivoPrincipal;
     private List<ResumoDTO> resumos;
+    private List<MetaDTO> metas;
+    private List<NotaDTO> notas;
 
     public PerfilProfissionalDTO() {
     }
@@ -30,9 +34,11 @@ public class PerfilProfissionalDTO implements Serializable {
         this.experiencia = entity.getExperiencia();
         this.objetivoPrincipal = entity.getObjetivoPrincipal();
         this.resumos = entity.getResumos().stream().map(ResumoDTO::new).collect(Collectors.toList());
+        if (entity.getUsuario() != null) {
+            this.metas = entity.getUsuario().getMetas().stream().map(MetaDTO::new).collect(Collectors.toList());
+            this.notas = entity.getUsuario().getNotas().stream().map(NotaDTO::new).collect(Collectors.toList());
+        }
     }
-
-    // Getters e Setters para todos os campos
 
     public UUID getPerfilId() {
         return perfilId;
@@ -96,5 +102,21 @@ public class PerfilProfissionalDTO implements Serializable {
 
     public void setResumos(List<ResumoDTO> resumos) {
         this.resumos = resumos;
+    }
+
+    public List<MetaDTO> getMetas() {
+        return metas;
+    }
+
+    public void setMetas(List<MetaDTO> metas) {
+        this.metas = metas;
+    }
+
+    public List<NotaDTO> getNotas() {
+        return notas;
+    }
+
+    public void setNotas(List<NotaDTO> notas) {
+        this.notas = notas;
     }
 }

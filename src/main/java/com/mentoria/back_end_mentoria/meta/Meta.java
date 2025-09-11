@@ -15,7 +15,11 @@ import java.util.UUID;
 public class Meta implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID metaId;
+
+    @Version
+    private Long version;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
@@ -33,7 +37,6 @@ public class Meta implements Serializable {
     }
 
     public Meta(UUID metaId, Usuario usuario, Titulo titulo, Prazo prazo, StatusMeta statusMeta) {
-        this.metaId = metaId;
         this.usuario = usuario;
         this.titulo = titulo;
         this.prazo = prazo;

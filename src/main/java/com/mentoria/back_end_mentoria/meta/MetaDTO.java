@@ -25,6 +25,8 @@ public class MetaDTO implements Serializable {
         this.statusMeta = entity.getStatusMeta();
     }
 
+
+
     public UUID getMetaId() {
         return metaId;
     }
