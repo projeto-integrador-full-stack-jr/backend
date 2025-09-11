@@ -1,5 +1,8 @@
 package com.mentoria.back_end_mentoria.vog;
 
+import jakarta.persistence.Embeddable; // Importar
+
+@Embeddable
 public class Titulo {
 
     private String titulo;

@@ -1,6 +1,11 @@
 package com.mentoria.back_end_mentoria.vog;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class Conteudo {
+    @Column(length = 10000)
     private String conteudo;
 
     public Conteudo() {

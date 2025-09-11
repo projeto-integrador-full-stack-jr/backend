@@ -1,6 +1,6 @@
 package com.mentoria.back_end_mentoria.nota;
 
-import com.mentoria.back_end_mentoria.usuario.Usuario;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import jakarta.persistence.*;
@@ -16,8 +16,8 @@ public class Nota implements Serializable {
     private UUID notaId;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @JoinColumn(name = "perfilProfissional_id")
+    private PerfilProfissional perfilProfissional;
 
     @Embedded
     private Titulo titulo;
@@ -28,9 +28,9 @@ public class Nota implements Serializable {
     public Nota() {
     }
 
-    public Nota(UUID notaId, Usuario usuarioId, Titulo titulo, Conteudo conteudo) {
+    public Nota(UUID notaId, PerfilProfissional perfilProfissional, Titulo titulo, Conteudo conteudo) {
         this.notaId = notaId;
-        this.usuario = usuarioId;
+        this.perfilProfissional = perfilProfissional;
         this.titulo = titulo;
         this.conteudo = conteudo;
     }
@@ -43,12 +43,12 @@ public class Nota implements Serializable {
         this.notaId = notaId;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public PerfilProfissional getPerfilProfissional() {
+        return perfilProfissional;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPerfilProfissional(PerfilProfissional perfilProfissional) {
+        this.perfilProfissional = perfilProfissional;
     }
 
     public Titulo getTitulo() {
