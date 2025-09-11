@@ -19,6 +19,7 @@ import java.util.UUID;
 public class Usuario implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID usuarioId;
 
     @Embedded
@@ -47,8 +48,7 @@ public class Usuario implements Serializable {
     public Usuario() {
     }
 
-    public Usuario(UUID usuarioId, Email email, Senha senha) {
-        this.usuarioId = usuarioId;
+    public Usuario(Email email, Senha senha) {
         this.email = email;
         this.senha = senha;
     }
