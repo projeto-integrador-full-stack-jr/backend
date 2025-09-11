@@ -55,15 +55,12 @@ public class TestConfig implements CommandLineRunner {
         Resumo ru = new Resumo(UUID.randomUUID(), pp, new Titulo("Resumo de Carreira"), new Conteudo("Este é um resumo gerado para o perfil."));
         resumoRepository.save(ru);
 
-        // Adiciona o resumo ao perfil
-        pp.getResumos().add(ru);
-        perfilProfissionalRepository.save(pp);
-
-        Meta m1 = new Meta(UUID.randomUUID(), c1, new Titulo("Estudar Spring Boot"), new Prazo(Instant.now().plusSeconds(864000)), StatusMeta.EM_ANDAMENTO);
+        Meta m1 = new Meta(pp, new Titulo("Estudar Spring Boot"), new Prazo(Instant.now().plusSeconds(864000)), StatusMeta.EM_ANDAMENTO);
         metaRepository.save(m1);
 
-        Nota n1 = new Nota(UUID.randomUUID(), c1, new Titulo("Anotação Importante"), new Conteudo("Lembrar de refatorar o código amanhã."));
+        Nota n1 = new Nota(UUID.randomUUID(), pp, new Titulo("Anotação Importante"), new Conteudo("Lembrar de refatorar o código amanhã."));
         notaRepository.save(n1);
+
 
         Usuario c2 = new Usuario(UUID.randomUUID(), new Email("exemplo@email.com"), new Senha("OutraSenha#456"));
         usuarioRepository.save(c2);
@@ -74,14 +71,12 @@ public class TestConfig implements CommandLineRunner {
         Resumo ru2 = new Resumo(UUID.randomUUID(), pp2, new Titulo("Experiência Profissional"), new Conteudo("Vasta experiência em análise de dados e modelagem preditiva."));
         resumoRepository.save(ru2);
 
-        pp2.getResumos().add(ru2);
-        perfilProfissionalRepository.save(pp2);
-
-        Meta m2 = new Meta(UUID.randomUUID(), c2, new Titulo("Aprender Python para Data Science"), new Prazo(Instant.now().plusSeconds(2592000)), StatusMeta.PENDENTE);
+        Meta m2 = new Meta(pp2, new Titulo("Aprender Python para Data Science"), new Prazo(Instant.now().plusSeconds(2592000)), StatusMeta.PENDENTE);
         metaRepository.save(m2);
 
-        Nota n2 = new Nota(UUID.randomUUID(), c2, new Titulo("Ideia para novo projeto"), new Conteudo("Criar um dashboard interativo com os dados de vendas."));
+        Nota n2 = new Nota(UUID.randomUUID(), pp2, new Titulo("Ideia para novo projeto"), new Conteudo("Criar um dashboard interativo com os dados de vendas."));
         notaRepository.save(n2);
+
 
         Usuario c3 = new Usuario(UUID.randomUUID(), new Email("dev@sistema.com"), new Senha("DevSenha!789"));
         usuarioRepository.save(c3);
@@ -92,45 +87,10 @@ public class TestConfig implements CommandLineRunner {
         Resumo ru3 = new Resumo(UUID.randomUUID(), pp3, new Titulo("Sobre Mim"), new Conteudo("Especialista em automação de infraestrutura e orquestração de contêineres."));
         resumoRepository.save(ru3);
 
-        pp3.getResumos().add(ru3);
-        perfilProfissionalRepository.save(pp3);
-
-        Meta m3 = new Meta(UUID.randomUUID(), c3, new Titulo("Certificação AWS Solutions Architect"), new Prazo(Instant.now().plusSeconds(7776000)), StatusMeta.EM_ANDAMENTO);
+        Meta m3 = new Meta(pp3, new Titulo("Certificação AWS Solutions Architect"), new Prazo(Instant.now().plusSeconds(7776000)), StatusMeta.EM_ANDAMENTO);
         metaRepository.save(m3);
 
-        Nota n3 = new Nota(UUID.randomUUID(), c3, new Titulo("Reunião com a equipe"), new Conteudo("Discutir a migração para Kubernetes na próxima segunda-feira."));
+        Nota n3 = new Nota(UUID.randomUUID(), pp3, new Titulo("Reunião com a equipe"), new Conteudo("Discutir a migração para Kubernetes na próxima segunda-feira."));
         notaRepository.save(n3);
-        /*
-        ---- Nota Importante sobre essa classe!!! ----
-
-        Você que chegou até aqui para entender o que é essa classe,
-        deixo essa explicação:
-
-        - Essa classe serve para testar a persistência das entidades no
-        banco de dados em memória chamado H2. Ele funciona como se fosse
-        um banco de dados comum, porém fica na memória RAM. Isso significa
-        que ele é volátil: toda vez que o Spring for desligado, os dados
-        serão apagados.
-
-        Então por que usar o H2?
-        Simples: para testar a interface JpaRepository de um modo que não
-        polua as tabelas do banco de dados real (aquele que persiste de fato).
-        No início do projeto usamos o H2 justamente para validar as entidades,
-        controllers e services da API REST sem comprometer o banco definitivo.
-
-        Eu já testei as entidades no H2 e funcionou bem. Mas caso as propriedades
-        das entidades mudem, essa classe serve para retestar.
-
-        Outra coisa importante: para evitar erros de persistência, é bom sempre
-        analisar o construtor da classe antes de salvar. Se o construtor exigir
-        outra entidade que ainda não exista no banco, vai dar erro de SQL.
-
-        Exemplo:
-        As classes com objetos n1, m1 e pp usam a entidade Usuario no construtor.
-        Por isso, a classe c1 (Usuario) deve ser criada antes. Não tem como salvar
-        um objeto que depende de outro se esse outro ainda nem existe.
-
-        Qualquer dúvida, falar com o Alef.
-*/
     }
 }

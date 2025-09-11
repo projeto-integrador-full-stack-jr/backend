@@ -1,5 +1,7 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
+import com.mentoria.back_end_mentoria.meta.Meta;
+import com.mentoria.back_end_mentoria.nota.Nota;
 import com.mentoria.back_end_mentoria.resumo.Resumo;
 import com.mentoria.back_end_mentoria.usuario.Usuario;
 import jakarta.persistence.*;
@@ -28,6 +30,12 @@ public class PerfilProfissional implements Serializable {
 
     @OneToMany(mappedBy = "perfilProfissional", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Resumo> resumos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfilProfissional", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Nota> notas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "perfilProfissional", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Meta> metas = new ArrayList<>();
 
     public PerfilProfissional() {
     }
@@ -106,5 +114,21 @@ public class PerfilProfissional implements Serializable {
 
     public void setResumos(List<Resumo> resumos) {
         this.resumos = resumos;
+    }
+
+    public List<Nota> getNotas() {
+        return notas;
+    }
+
+    public void setNotas(List<Nota> notas) {
+        this.notas = notas;
+    }
+
+    public List<Meta> getMetas() {
+        return metas;
+    }
+
+    public void setMetas(List<Meta> metas) {
+        this.metas = metas;
     }
 }

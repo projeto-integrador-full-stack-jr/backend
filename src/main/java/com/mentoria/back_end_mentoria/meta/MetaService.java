@@ -1,7 +1,7 @@
 package com.mentoria.back_end_mentoria.meta;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class MetaService {
     private MetaRepository metaRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private PerfilProfissionalRepository perfilProfissionalRepository;
 
     @Transactional(readOnly = true)
     public List<MetaDTO> findAll() {
@@ -62,7 +62,10 @@ public class MetaService {
         entity.setTitulo(dto.getTitulo());
         entity.setPrazo(dto.getPrazo());
         entity.setStatusMeta(dto.getStatusMeta());
-        entity.setUsuario(usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para criar a meta")));
+
+        if (dto.getPerfilProfissionalId() != null) {
+            entity.setPerfilProfissional(perfilProfissionalRepository.findById(dto.getPerfilProfissionalId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado para a meta")));
+        }
     }
 }

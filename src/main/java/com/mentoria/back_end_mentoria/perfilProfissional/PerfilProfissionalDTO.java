@@ -34,11 +34,11 @@ public class PerfilProfissionalDTO implements Serializable {
         this.experiencia = entity.getExperiencia();
         this.objetivoPrincipal = entity.getObjetivoPrincipal();
         this.resumos = entity.getResumos().stream().map(ResumoDTO::new).collect(Collectors.toList());
-        if (entity.getUsuario() != null) {
-            this.metas = entity.getUsuario().getMetas().stream().map(MetaDTO::new).collect(Collectors.toList());
-            this.notas = entity.getUsuario().getNotas().stream().map(NotaDTO::new).collect(Collectors.toList());
-        }
+        this.notas = entity.getNotas().stream().map(NotaDTO::new).collect(Collectors.toList());
+        this.metas = entity.getMetas().stream().map(MetaDTO::new).collect(Collectors.toList());
     }
+
+    // Getters e Setters para todos os campos
 
     public UUID getPerfilId() {
         return perfilId;

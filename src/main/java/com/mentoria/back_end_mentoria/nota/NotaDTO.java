@@ -9,7 +9,7 @@ import java.util.UUID;
 public class NotaDTO implements Serializable {
 
     private UUID notaId;
-    private UUID usuarioId;
+    private UUID perfilProfissionalId;
     private String titulo;
     private String conteudo;
 
@@ -18,7 +18,7 @@ public class NotaDTO implements Serializable {
 
     public NotaDTO(Nota entity) {
         this.notaId = entity.getNotaId();
-        this.usuarioId = (entity.getUsuario() != null) ? entity.getUsuario().getUsuarioId() : null;
+        this.perfilProfissionalId = (entity.getPerfilProfissional() != null) ? entity.getPerfilProfissional().getPerfilId() : null;
         this.titulo = entity.getTitulo().getTitulo();
         this.conteudo = entity.getConteudo().getConteudo();
     }
@@ -37,12 +37,12 @@ public class NotaDTO implements Serializable {
         this.notaId = notaId;
     }
 
-    public UUID getUsuarioId() {
-        return usuarioId;
+    public UUID getPerfilProfissionalId() {
+        return perfilProfissionalId;
     }
 
-    public void setUsuarioId(UUID usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setPerfilProfissionalId(UUID perfilProfissionalId) {
+        this.perfilProfissionalId = perfilProfissionalId;
     }
 
     public String getTitulo() {

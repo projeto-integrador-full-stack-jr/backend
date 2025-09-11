@@ -1,7 +1,7 @@
 package com.mentoria.back_end_mentoria.nota;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,7 +20,7 @@ public class NotaService {
     private NotaRepository notaRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private PerfilProfissionalRepository perfilProfissionalRepository;
 
     @Transactional(readOnly = true)
     public List<NotaDTO> findAll(){
@@ -65,9 +65,9 @@ public class NotaService {
         entity.setTitulo(new Titulo(dto.getTitulo()));
         entity.setConteudo(new Conteudo(dto.getConteudo()));
 
-        if (dto.getUsuarioId() != null) {
-            entity.setUsuario(usuarioRepository.findById(dto.getUsuarioId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para a nota")));
+        if (dto.getPerfilProfissionalId() != null) {
+            entity.setPerfilProfissional(perfilProfissionalRepository.findById(dto.getPerfilProfissionalId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado para a nota")));
         }
     }
 }

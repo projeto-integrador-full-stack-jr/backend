@@ -9,7 +9,7 @@ import java.util.UUID;
 public class MetaDTO implements Serializable {
 
     private UUID metaId;
-    private UUID usuarioId;
+    private UUID perfilProfissionalId;
     private String titulo;
     private Instant prazo;
     private StatusMeta statusMeta;
@@ -19,13 +19,11 @@ public class MetaDTO implements Serializable {
 
     public MetaDTO(Meta entity) {
         this.metaId = entity.getMetaId();
-        this.usuarioId = entity.getUsuario().getUsuarioId();
+        this.perfilProfissionalId = (entity.getPerfilProfissional() != null) ? entity.getPerfilProfissional().getPerfilId() : null;
         this.titulo = entity.getTitulo();
         this.prazo = entity.getPrazo();
         this.statusMeta = entity.getStatusMeta();
     }
-
-
 
     public UUID getMetaId() {
         return metaId;
@@ -35,12 +33,12 @@ public class MetaDTO implements Serializable {
         this.metaId = metaId;
     }
 
-    public UUID getUsuarioId() {
-        return usuarioId;
+    public UUID getPerfilProfissionalId() {
+        return perfilProfissionalId;
     }
 
-    public void setUsuarioId(UUID usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setPerfilProfissionalId(UUID perfilProfissionalId) {
+        this.perfilProfissionalId = perfilProfissionalId;
     }
 
     public String getTitulo() {

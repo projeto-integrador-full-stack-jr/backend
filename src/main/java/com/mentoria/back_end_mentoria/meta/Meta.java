@@ -2,8 +2,8 @@ package com.mentoria.back_end_mentoria.meta;
 
 import com.mentoria.back_end_mentoria.meta.vo.Prazo;
 import com.mentoria.back_end_mentoria.meta.vo.StatusMeta;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.vog.Titulo;
-import com.mentoria.back_end_mentoria.usuario.Usuario;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -22,8 +22,8 @@ public class Meta implements Serializable {
     private Long version;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @JoinColumn(name = "perfilProfissional_id")
+    private PerfilProfissional perfilProfissional;
 
     @Embedded
     private Titulo titulo;
@@ -36,8 +36,8 @@ public class Meta implements Serializable {
     protected Meta() {
     }
 
-    public Meta(UUID metaId, Usuario usuario, Titulo titulo, Prazo prazo, StatusMeta statusMeta) {
-        this.usuario = usuario;
+    public Meta(PerfilProfissional perfilProfissional, Titulo titulo, Prazo prazo, StatusMeta statusMeta) {
+        this.perfilProfissional = perfilProfissional;
         this.titulo = titulo;
         this.prazo = prazo;
         setStatusMeta(statusMeta);
@@ -51,12 +51,12 @@ public class Meta implements Serializable {
         this.metaId = metaId;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public PerfilProfissional getPerfilProfissional() {
+        return perfilProfissional;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPerfilProfissional(PerfilProfissional perfilProfissional) {
+        this.perfilProfissional = perfilProfissional;
     }
 
     public String getTitulo() {
