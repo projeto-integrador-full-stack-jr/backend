@@ -1,6 +1,5 @@
 package com.mentoria.back_end_mentoria.usuario;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +12,6 @@ import java.util.UUID;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -25,9 +23,13 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> findAll() {
+    public ResponseEntity<List<UsuarioDTO>> findAll() {
+
         List<Usuario> lista = usuarioService.findAll();
-        return ResponseEntity.ok().body(lista);
+        
+        List<UsuarioDTO> listaDTO = lista.stream().map(UsuarioDTO::new).toList();
+        
+        return ResponseEntity.ok().body(listaDTO);
     }
 
     @PostMapping
@@ -37,8 +39,11 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> findById(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
         Usuario usuario = usuarioService.findById(id);
-        return ResponseEntity.ok().body(usuario);
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
+
+        return ResponseEntity.ok().body(usuarioDTO);
     }    
 }
