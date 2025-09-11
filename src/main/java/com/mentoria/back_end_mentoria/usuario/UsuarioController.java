@@ -36,4 +36,9 @@ public class UsuarioController {
         return ResponseEntity.ok().body(novoUsuario);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> findById(@PathVariable UUID id) {
+        Usuario usuario = usuarioService.findById(id);
+        return ResponseEntity.ok().body(usuario);
+    }    
 }
