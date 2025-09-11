@@ -46,7 +46,7 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Usuario c1 = new Usuario(UUID.randomUUID(), new Email("teste@teste.com"), new Senha("Senha@123"));
+        Usuario c1 = new Usuario(new Email("teste@teste.com"), new Senha("Senha@123"));
         Meta m1 = new Meta(UUID.randomUUID(), c1, new Titulo("Teste"), new Prazo(Instant.now()), StatusMeta.EM_ANDAMENTO);
         Nota n1 = new Nota(UUID.randomUUID(), c1, new Titulo("Teste"), new Conteudo("cabeça de limão"));
         PerfilProfissional pp = new PerfilProfissional(UUID.randomUUID(), c1, "Fulano", "Cabeça de lata", "Batedor de caixa", "Iniciante", "Ganhar dinheiro");
