@@ -30,24 +30,16 @@ public class ResumoController {
 
     @PostMapping
     public ResponseEntity<ResumoDTO> insert(@RequestBody ResumoDTO dto) {
-        dto = resumoService.insert(dto);
+        ResumoDTO novoResumoDto = resumoService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getResumoId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
-    }
-
-    @PostMapping(value = "/gerar-resumo-ia")
-    public ResponseEntity<ResumoDTO> criarResumoIA(@RequestParam UUID perfilId) {
-        ResumoDTO novoResumoDto = resumoService.criarResumoIA(perfilId);
-        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/resumos/{id}")
                 .buildAndExpand(novoResumoDto.getResumoId()).toUri();
         return ResponseEntity.created(uri).body(novoResumoDto);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<ResumoDTO> update(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
-        dto = resumoService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+        ResumoDTO resumoAtualizado = resumoService.update(id, dto);
+        return ResponseEntity.ok().body(resumoAtualizado);
     }
 
     @DeleteMapping(value = "/{id}")
