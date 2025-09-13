@@ -13,7 +13,7 @@ import com.mentoria.back_end_mentoria.resumo.ResumoRepository;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.usuario.UsuarioController;
 import com.mentoria.back_end_mentoria.usuario.vo.Email;
 import com.mentoria.back_end_mentoria.usuario.vo.Senha;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,6 @@ import java.util.UUID;
 public class TestConfig implements CommandLineRunner {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private MetaRepository metaRepository;
 
     @Autowired
@@ -42,6 +39,9 @@ public class TestConfig implements CommandLineRunner {
 
     @Autowired
     private ResumoRepository resumoRepository;
+
+    @Autowired
+    private UsuarioController usuarioController;
 
     @Override
     public void run(String... args) throws Exception {
@@ -85,7 +85,8 @@ public class TestConfig implements CommandLineRunner {
         Qualquer dúvida, falar com o Alef.
 */
 
-        usuarioRepository.save(c1);
+        usuarioController.save(c1);
+
         perfilProfissionalRepository.save(pp);
         resumoRepository.save(ru);
         notaRepository.save(n1);
