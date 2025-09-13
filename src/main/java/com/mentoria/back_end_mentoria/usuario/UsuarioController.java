@@ -33,9 +33,12 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> save(@RequestBody Usuario usuario) {
+    public ResponseEntity<UsuarioDTO> save(@RequestBody Usuario usuario) {
         Usuario novoUsuario = usuarioService.save(usuario);
-        return ResponseEntity.ok().body(novoUsuario);
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(novoUsuario);
+
+        return ResponseEntity.ok().body(usuarioDTO);
     }
 
     @GetMapping("/{id}")
