@@ -22,6 +22,10 @@ public class Senha {
         return valor;
     }
 
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+
     private boolean validarSenha(String senha) {
         if (senha == null) return false;
         // Regex:
