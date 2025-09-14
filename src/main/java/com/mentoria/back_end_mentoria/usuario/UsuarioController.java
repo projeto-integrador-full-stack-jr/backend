@@ -22,7 +22,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
+    @GetMapping(value = "/listar")
     public ResponseEntity<List<UsuarioDTO>> findAll() {
 
         List<Usuario> lista = usuarioService.findAll();
