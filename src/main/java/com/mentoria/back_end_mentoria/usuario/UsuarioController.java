@@ -2,6 +2,7 @@ package com.mentoria.back_end_mentoria.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,5 +49,12 @@ public class UsuarioController {
         UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
 
         return ResponseEntity.ok().body(usuarioDTO);
-    }    
+    }
+    
+    @GetMapping("/eu")
+    public ResponseEntity<UsuarioDTO> getUsuarioLogado(Authentication authentication) {
+        Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+
+        return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
+    }
 }
