@@ -6,6 +6,8 @@ import com.mentoria.back_end_mentoria.meta.Meta;
 import com.mentoria.back_end_mentoria.nota.Nota;
 import com.mentoria.back_end_mentoria.usuario.vo.Email;
 import com.mentoria.back_end_mentoria.usuario.vo.Senha;
+import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
+
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
@@ -31,6 +34,8 @@ public class Usuario implements Serializable, UserDetails {
 
     @Embedded
     private Senha senha;
+
+    private UserRole acesso;
 
     @JsonIgnore
     @OneToMany(mappedBy = "usuario")
@@ -52,7 +57,8 @@ public class Usuario implements Serializable, UserDetails {
     public Usuario() {
     }
 
-    public Usuario(Email email, Senha senha) {
+    public Usuario(Email email, Senha senha, UserRole acesso) {
+        this.acesso = acesso;
         this.email = email;
         this.senha = senha;
     }
@@ -69,12 +75,20 @@ public class Usuario implements Serializable, UserDetails {
         return senha;
     }
 
+    public UserRole getAcesso() {
+        return acesso;
+    }
+
     public void setEmail(Email email) {
         this.email = email;
     }
 
     public void setSenha(Senha senha) {
         this.senha = senha;
+    }
+
+    public void setAcesso(UserRole acesso) {
+        this.acesso = acesso;
     }
 
     public List<Meta> getMetas() {
@@ -106,7 +120,11 @@ public class Usuario implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        if(this.acesso == UserRole.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        }else{
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
     }
 
     @Override

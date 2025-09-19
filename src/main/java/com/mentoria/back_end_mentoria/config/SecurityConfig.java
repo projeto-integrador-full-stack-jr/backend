@@ -35,7 +35,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                    //req.requestMatchers(HttpMethod.GET, "/usuarios/listar").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").hasRole("USER");
                     req.requestMatchers(toH2Console()).permitAll();
                     // Adicione aqui outras rotas públicas, se houver
                     req.anyRequest().authenticated();

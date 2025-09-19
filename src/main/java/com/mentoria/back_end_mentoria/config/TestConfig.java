@@ -16,6 +16,8 @@ import com.mentoria.back_end_mentoria.usuario.Usuario;
 import com.mentoria.back_end_mentoria.usuario.UsuarioController;
 import com.mentoria.back_end_mentoria.usuario.vo.Email;
 import com.mentoria.back_end_mentoria.usuario.vo.Senha;
+import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +48,8 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Usuario c1 = new Usuario(new Email("teste@teste.com"), new Senha("Senha@123"));
+        Usuario c1 = new Usuario(new Email("teste@teste.com"), new Senha("Senha@123"), UserRole.ADMIN);
+        Usuario c2 = new Usuario(new Email("teste2@teste.com"), new Senha("Senha@1234"), UserRole.USER);
         Meta m1 = new Meta(UUID.randomUUID(), c1, new Titulo("Teste"), new Prazo(Instant.now()), StatusMeta.EM_ANDAMENTO);
         Nota n1 = new Nota(UUID.randomUUID(), c1, new Titulo("Teste"), new Conteudo("cabeça de limão"));
         PerfilProfissional pp = new PerfilProfissional(UUID.randomUUID(), c1, "Fulano", "Cabeça de lata", "Batedor de caixa", "Iniciante", "Ganhar dinheiro");
@@ -86,7 +89,7 @@ public class TestConfig implements CommandLineRunner {
 */
 
         usuarioController.save(c1);
-
+        usuarioController.save(c2);
         perfilProfissionalRepository.save(pp);
         resumoRepository.save(ru);
         notaRepository.save(n1);
