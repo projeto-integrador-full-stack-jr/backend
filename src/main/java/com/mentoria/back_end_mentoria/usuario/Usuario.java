@@ -3,17 +3,24 @@ package com.mentoria.back_end_mentoria.usuario;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mentoria.back_end_mentoria.usuario.vo.Email;
 import com.mentoria.back_end_mentoria.usuario.vo.Senha;
+import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_usuario")
-public class Usuario implements Serializable {
+public class Usuario implements Serializable, UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID usuarioId;
 
     @Embedded
@@ -21,6 +28,8 @@ public class Usuario implements Serializable {
 
     @Embedded
     private Senha senha;
+
+    private UserRole acesso;
 
     @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
@@ -33,8 +42,8 @@ public class Usuario implements Serializable {
     public Usuario() {
     }
 
-    public Usuario(UUID usuarioId, Email email, Senha senha) {
-        this.usuarioId = usuarioId;
+    public Usuario(Email email, Senha senha, UserRole acesso) {
+        this.acesso = acesso;
         this.email = email;
         this.senha = senha;
     }
@@ -51,12 +60,20 @@ public class Usuario implements Serializable {
         return senha;
     }
 
+    public UserRole getAcesso() {
+        return acesso;
+    }
+
     public void setEmail(Email email) {
         this.email = email;
     }
 
     public void setSenha(Senha senha) {
         this.senha = senha;
+    }
+
+    public void setAcesso(UserRole acesso) {
+        this.acesso = acesso;
     }
 
     public Instant getCreatedAt() {
@@ -76,5 +93,44 @@ public class Usuario implements Serializable {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = Instant.now();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.acesso == UserRole.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha.getValor();
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email.getEmail();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
