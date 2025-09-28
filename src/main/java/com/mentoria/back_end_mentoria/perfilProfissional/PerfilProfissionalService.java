@@ -63,7 +63,6 @@ public class PerfilProfissionalService {
     }
 
     private void copyDtoToEntity(PerfilProfissionalDTO dto, PerfilProfissional entity) {
-        entity.setPerfilId(dto.getPerfilId());
         entity.setNomeUsuario(dto.getNomeUsuario());
         entity.setCargo(dto.getCargo());
         entity.setCarreira(dto.getCarreira());

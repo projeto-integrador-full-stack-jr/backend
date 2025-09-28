@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Nota implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID notaId;
 
     @ManyToOne

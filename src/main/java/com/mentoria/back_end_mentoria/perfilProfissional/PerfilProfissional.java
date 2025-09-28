@@ -16,6 +16,7 @@ import java.util.UUID;
 public class PerfilProfissional implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID perfilId;
 
     @OneToOne

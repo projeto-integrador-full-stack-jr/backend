@@ -14,6 +14,7 @@ import java.util.UUID;
 public class Resumo implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID resumoId;
 
     @JsonIgnore

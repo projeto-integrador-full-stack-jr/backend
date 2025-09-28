@@ -36,7 +36,7 @@ public class NotaService {
     @Transactional
     public NotaDTO insert(NotaDTO dto) {
         Nota entity = new Nota();
-        entity.setNotaId(UUID.randomUUID());
+
         copyDtoToEntity(dto, entity);
         entity = notaRepository.save(entity);
         return new NotaDTO(entity);

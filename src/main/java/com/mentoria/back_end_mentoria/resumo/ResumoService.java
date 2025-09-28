@@ -49,7 +49,7 @@ public class ResumoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado"));
 
         Resumo entity = new Resumo();
-        entity.setResumoId(UUID.randomUUID());
+//        entity.setResumoId(UUID.randomUUID());
         entity.setPerfilProfissional(perfil);
 
         if (!StringUtils.hasText(dto.getConteudo())) {

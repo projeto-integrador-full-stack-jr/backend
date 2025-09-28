@@ -1,4 +1,4 @@
-package com.mentoria.back_end_mentoria.config;
+package config;
 
 import com.mentoria.back_end_mentoria.meta.Meta;
 import com.mentoria.back_end_mentoria.meta.MetaRepository;
