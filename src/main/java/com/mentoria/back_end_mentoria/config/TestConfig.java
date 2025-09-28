@@ -52,8 +52,15 @@ public class TestConfig implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        Usuario c1 = new Usuario(new Email("teste@teste.com"), new Senha(passwordEncoder.encode("Senha@123")), UserRole.ADMIN);
-        Usuario c2 = new Usuario(new Email("teste2@teste.com"), new Senha(passwordEncoder.encode("Senha@1234")), UserRole.USER);
+        // Cria a senha com o valor original para passar na validação do Value Object
+        Senha senhaAdmin = new Senha("Senha@123");
+        // Criptografa a senha antes de salvar
+        senhaAdmin.setValor(passwordEncoder.encode(senhaAdmin.getValor()));
+        Usuario c1 = new Usuario(new Email("teste@teste.com"), senhaAdmin, UserRole.ADMIN);
+
+        Senha senhaUser = new Senha("Senha@1234");
+        senhaUser.setValor(passwordEncoder.encode(senhaUser.getValor()));
+        Usuario c2 = new Usuario(new Email("teste2@teste.com"), senhaUser, UserRole.USER);
 
         usuarioRepository.save(c1);
         usuarioRepository.save(c2);
@@ -65,7 +72,11 @@ public class TestConfig implements CommandLineRunner {
         Nota n1 = new Nota(UUID.randomUUID(), pp, new Titulo("Teste"), new Conteudo("cabeça de limão"));
         Resumo ru = new Resumo(UUID.randomUUID(), pp, new Titulo("Teste"), new Conteudo("cabeça de limão"));
 
-/*
+        resumoRepository.save(ru);
+        notaRepository.save(n1);
+        metaRepository.save(m1);
+
+        /*
         ---- Nota Importante sobre essa classe!!! ----
 
         Você que chegou até aqui para entender o que é essa classe,
@@ -97,10 +108,5 @@ public class TestConfig implements CommandLineRunner {
 
         Qualquer dúvida, falar com o Alef.
 */
-
-
-        resumoRepository.save(ru);
-        notaRepository.save(n1);
-        metaRepository.save(m1);
     }
 }

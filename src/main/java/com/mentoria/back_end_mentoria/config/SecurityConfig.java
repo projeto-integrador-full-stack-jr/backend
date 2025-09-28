@@ -28,17 +28,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                //.csrf(csrf -> csrf.disable()) // Desabilita a proteção CSRF
-                .csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console()).disable()) // Desabilita a proteção CSRF para o H2 Console
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin())) // Permite o uso do H2 Console em uma mesma origem
+                .csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console()).disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
+                    // Rotas Públicas
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").hasRole("USER");
                     req.requestMatchers(toH2Console()).permitAll();
-                    // Adicione aqui outras rotas públicas, se houver
+
+                    // Rotas de Usuário (USER e ADMIN)
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").hasRole("USER");
+                    req.requestMatchers("/perfis/**").hasRole("USER");
+                    req.requestMatchers("/metas/**").hasRole("USER");
+                    req.requestMatchers("/notas/**").hasRole("USER");
+                    req.requestMatchers("/resumos/**").hasRole("USER");
+
+                    // Rotas de Administrador (ADMIN)
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN");
+
+
+                    // Qualquer outra rota precisa de autenticação
                     req.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
