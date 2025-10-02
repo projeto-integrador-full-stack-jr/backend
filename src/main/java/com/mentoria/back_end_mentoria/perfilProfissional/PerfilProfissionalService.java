@@ -71,6 +71,10 @@ public class PerfilProfissionalService {
         return new PerfilProfissionalDTO(entity);
     }
 
+    private Usuario getUsuarioLogado() {    
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     private void copyDtoToEntity(PerfilProfissionalDTO dto, PerfilProfissional entity) {
         entity.setNomeUsuario(dto.getNomeUsuario());
         entity.setCargo(dto.getCargo());
