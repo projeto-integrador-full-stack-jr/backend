@@ -74,6 +74,26 @@ public class MetaService {
         return lista.stream().map(MetaDTO::new).collect(Collectors.toList());
     }
 
+    @Transactional
+    public MetaDTO insertMyMeta(MetaDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+        
+        PerfilProfissional perfil = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Para criar uma meta, primeiro crie seu perfil profissional."));
+
+        Meta entity = new Meta();
+        
+        entity.setPerfilProfissional(perfil);
+        
+        entity.setTitulo(dto.getTitulo());
+        entity.setPrazo(dto.getPrazo());
+        entity.setStatusMeta(dto.getStatusMeta());
+
+        // Salva a nova meta
+        entity = metaRepository.save(entity);
+        return new MetaDTO(entity);
+    }
+
     private Usuario getUsuarioLogado() {    
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

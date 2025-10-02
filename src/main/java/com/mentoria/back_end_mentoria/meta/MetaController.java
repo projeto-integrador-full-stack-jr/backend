@@ -53,4 +53,12 @@ public class MetaController {
         List<MetaDTO> lista = metaService.findMyMetas();
         return ResponseEntity.ok().body(lista);
     }
+
+    @PostMapping("/minhas")
+    public ResponseEntity<MetaDTO> insertMyMeta(@RequestBody MetaDTO dto) {
+        MetaDTO novaMeta = metaService.insertMyMeta(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/metas/{id}")
+                .buildAndExpand(novaMeta.getMetaId()).toUri();
+        return ResponseEntity.created(uri).body(novaMeta);
+    }
 }
