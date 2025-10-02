@@ -71,6 +71,21 @@ public class PerfilProfissionalService {
         return new PerfilProfissionalDTO(entity);
     }
 
+    @Transactional
+    public PerfilProfissionalDTO createOrUpdateMyProfile(PerfilProfissionalDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        PerfilProfissional entity = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElse(new PerfilProfissional()); 
+        
+        entity.setUsuario(usuarioLogado);
+        
+        copyDtoToEntity(dto, entity);
+        
+        entity = perfilProfissionalRepository.save(entity);
+        return new PerfilProfissionalDTO(entity);
+    }
+
     private Usuario getUsuarioLogado() {    
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

@@ -54,5 +54,11 @@ public class PerfilProfissionalController {
         PerfilProfissionalDTO dto = perfilProfissionalService.findMyProfile();
         return ResponseEntity.ok().body(dto);
     }
+
+    @PutMapping("/meu")
+    public ResponseEntity<PerfilProfissionalDTO> createOrUpdateMyProfile(@RequestBody PerfilProfissionalDTO dto) {
+        PerfilProfissionalDTO perfilAtualizado = perfilProfissionalService.createOrUpdateMyProfile(dto);
+        return ResponseEntity.ok().body(perfilAtualizado);
+    }
     
 }
