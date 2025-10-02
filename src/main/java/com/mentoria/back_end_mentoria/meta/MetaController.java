@@ -67,4 +67,10 @@ public class MetaController {
         MetaDTO metaAtualizada = metaService.updateMyMeta(id, dto);
         return ResponseEntity.ok().body(metaAtualizada);
     }
+
+    @DeleteMapping("/minhas/{id}")
+    public ResponseEntity<Void> deleteMyMeta(@PathVariable UUID id) {
+        metaService.deleteMyMeta(id);
+        return ResponseEntity.noContent().build();
+    }
 }

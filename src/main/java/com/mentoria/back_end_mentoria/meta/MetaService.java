@@ -81,6 +81,22 @@ public class MetaService {
         metaRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteMyMeta(UUID metaId) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Meta entity = metaRepository.findById(metaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Meta não encontrada com o id: " + metaId));
+
+        UUID idDonoDaMeta = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDaMeta)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode deletar suas próprias metas.");
+        }
+
+        metaRepository.deleteById(metaId);
+    }
+
     @Transactional(readOnly = true)
     public List<MetaDTO> findMyMetas() {
         Usuario usuarioLogado = getUsuarioLogado();
