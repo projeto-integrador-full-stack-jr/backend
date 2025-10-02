@@ -2,10 +2,12 @@ package com.mentoria.back_end_mentoria.nota;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.usuario.Usuario;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,6 +61,10 @@ public class NotaService {
             throw new ResourceNotFoundException("Nota não encontrada com o id: " + id);
         }
         notaRepository.deleteById(id);
+    }
+
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     private void copyDtoToEntity(NotaDTO dto, Nota entity) {
