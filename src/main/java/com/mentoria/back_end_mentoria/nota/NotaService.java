@@ -56,6 +56,23 @@ public class NotaService {
     }
 
     @Transactional
+    public NotaDTO insertMyNota(NotaDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+        
+        PerfilProfissional perfil = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Para criar uma nota, primeiro crie seu perfil profissional."));
+
+        Nota entity = new Nota();
+        
+        entity.setPerfilProfissional(perfil);
+        
+        copyDtoToEntity(dto, entity);
+
+        entity = notaRepository.save(entity);
+        return new NotaDTO(entity);
+    }
+
+    @Transactional
     public NotaDTO update(UUID id, NotaDTO dto) {
         try {
             Nota entity = notaRepository.getReferenceById(id);

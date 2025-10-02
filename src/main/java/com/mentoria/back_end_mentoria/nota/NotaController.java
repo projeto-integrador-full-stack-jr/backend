@@ -53,4 +53,13 @@ public class NotaController {
         List<NotaDTO> lista = notaService.findMyNotas();
         return ResponseEntity.ok().body(lista);
     }
+
+    @PostMapping("/minhas")
+    public ResponseEntity<NotaDTO> insertMyNota(@RequestBody NotaDTO dto) {
+        NotaDTO novaNota = notaService.insertMyNota(dto);
+        // A URI aponta para o recurso genérico, que poderá ser acessado pelo dono ou por um admin
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/notas/{id}")
+                .buildAndExpand(novaNota.getNotaId()).toUri();
+        return ResponseEntity.created(uri).body(novaNota);
+    }
 }
