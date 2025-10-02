@@ -1,6 +1,7 @@
 package com.mentoria.back_end_mentoria.nota;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
 import com.mentoria.back_end_mentoria.usuario.Usuario;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
@@ -27,6 +28,16 @@ public class NotaService {
     @Transactional(readOnly = true)
     public List<NotaDTO> findAll(){
         return notaRepository.findAll().stream().map(NotaDTO::new).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<NotaDTO> findMyNotas() {
+        Usuario usuarioLogado = getUsuarioLogado(); 
+        PerfilProfissional perfil = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil profissional não encontrado para o usuário logado."));
+        
+        List<Nota> lista = notaRepository.findByPerfilProfissionalPerfilId(perfil.getPerfilId());
+        return lista.stream().map(NotaDTO::new).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

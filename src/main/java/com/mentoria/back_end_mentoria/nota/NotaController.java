@@ -47,4 +47,10 @@ public class NotaController {
         notaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/minhas")
+    public ResponseEntity<List<NotaDTO>> findMyNotas() {
+        List<NotaDTO> lista = notaService.findMyNotas();
+        return ResponseEntity.ok().body(lista);
+    }
 }
