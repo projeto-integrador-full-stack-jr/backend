@@ -61,4 +61,10 @@ public class MetaController {
                 .buildAndExpand(novaMeta.getMetaId()).toUri();
         return ResponseEntity.created(uri).body(novaMeta);
     }
+
+    @PutMapping("/minhas/{id}")
+    public ResponseEntity<MetaDTO> updateMyMeta(@PathVariable UUID id, @RequestBody MetaDTO dto) {
+        MetaDTO metaAtualizada = metaService.updateMyMeta(id, dto);
+        return ResponseEntity.ok().body(metaAtualizada);
+    }
 }

@@ -7,6 +7,7 @@ import com.mentoria.back_end_mentoria.usuario.Usuario;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +54,24 @@ public class MetaService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Meta não encontrada com o id: " + id);
         }
+    }
+
+    @Transactional
+    public MetaDTO updateMyMeta(UUID metaId, MetaDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+        
+        Meta entity = metaRepository.findById(metaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Meta não encontrada com o id: " + metaId));
+        
+        UUID idDonoDaMeta = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDaMeta)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode alterar suas próprias metas.");
+        }
+
+        copyDtoToEntity(dto, entity);
+        entity = metaRepository.save(entity);
+        return new MetaDTO(entity);
     }
 
     public void delete(UUID id) {
