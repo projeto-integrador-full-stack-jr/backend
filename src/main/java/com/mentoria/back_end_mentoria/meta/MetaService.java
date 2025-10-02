@@ -62,6 +62,18 @@ public class MetaService {
         metaRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
+    public List<MetaDTO> findMyMetas() {
+        Usuario usuarioLogado = getUsuarioLogado();
+        
+        PerfilProfissional perfil = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil profissional não encontrado para o usuário logado."));
+        
+        List<Meta> lista = metaRepository.findByPerfilProfissionalPerfilId(perfil.getPerfilId());
+        
+        return lista.stream().map(MetaDTO::new).collect(Collectors.toList());
+    }
+
     private Usuario getUsuarioLogado() {    
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

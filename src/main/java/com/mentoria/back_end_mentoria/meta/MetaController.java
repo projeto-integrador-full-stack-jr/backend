@@ -47,4 +47,10 @@ public class MetaController {
         metaService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/minhas")
+    public ResponseEntity<List<MetaDTO>> findMyMetas() {
+        List<MetaDTO> lista = metaService.findMyMetas();
+        return ResponseEntity.ok().body(lista);
+    }
 }
