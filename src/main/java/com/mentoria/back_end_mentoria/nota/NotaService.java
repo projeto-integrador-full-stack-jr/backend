@@ -8,6 +8,7 @@ import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,6 +83,24 @@ public class NotaService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Nota não encontrada com o id: " + id);
         }
+    }
+
+    @Transactional
+    public NotaDTO updateMyNota(UUID notaId, NotaDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Nota entity = notaRepository.findById(notaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Nota não encontrada com o id: " + notaId));
+
+        UUID idDonoDaNota = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDaNota)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode alterar suas próprias notas.");
+        }
+
+        copyDtoToEntity(dto, entity);
+        entity = notaRepository.save(entity);
+        return new NotaDTO(entity);
     }
 
     public void delete(UUID id) {

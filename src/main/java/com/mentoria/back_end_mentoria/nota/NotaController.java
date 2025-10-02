@@ -62,4 +62,10 @@ public class NotaController {
                 .buildAndExpand(novaNota.getNotaId()).toUri();
         return ResponseEntity.created(uri).body(novaNota);
     }
+
+    @PutMapping("/minhas/{id}")
+    public ResponseEntity<NotaDTO> updateMyNota(@PathVariable UUID id, @RequestBody NotaDTO dto) {
+        NotaDTO notaAtualizada = notaService.updateMyNota(id, dto);
+        return ResponseEntity.ok().body(notaAtualizada);
+    }
 }

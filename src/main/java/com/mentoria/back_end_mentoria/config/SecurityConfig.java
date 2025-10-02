@@ -50,6 +50,7 @@ public class SecurityConfig {
                     //Notas
                     req.requestMatchers(HttpMethod.GET, "/notas/minhas").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/notas/minhas").authenticated(); 
+                    req.requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated();
 
                     // Rotas de Usuário (USER e ADMIN)
                     req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
