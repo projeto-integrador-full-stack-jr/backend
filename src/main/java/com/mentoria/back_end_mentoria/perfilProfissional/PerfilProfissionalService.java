@@ -1,9 +1,11 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.usuario.Usuario;
 import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +62,13 @@ public class PerfilProfissionalService {
             throw new ResourceNotFoundException("Recurso não encontrado com o id: " + id);
         }
         perfilProfissionalRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public PerfilProfissionalDTO findMyProfile(){
+        Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PerfilProfissional entity = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId()).orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional nao encontrado para o usuário logado"));
+        return new PerfilProfissionalDTO(entity);
     }
 
     private void copyDtoToEntity(PerfilProfissionalDTO dto, PerfilProfissional entity) {

@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping(value = "/perfis")
 public class PerfilProfissionalController {
@@ -47,4 +48,11 @@ public class PerfilProfissionalController {
         perfilProfissionalService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/meu")
+    public ResponseEntity<PerfilProfissionalDTO> findMyProfile() {
+        PerfilProfissionalDTO dto = perfilProfissionalService.findMyProfile();
+        return ResponseEntity.ok().body(dto);
+    }
+    
 }
