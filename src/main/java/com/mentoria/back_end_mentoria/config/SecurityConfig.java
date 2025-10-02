@@ -37,7 +37,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
 
                     // Rotas de Usuário (USER e ADMIN)
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").hasRole("USER");
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
                     req.requestMatchers("/perfis/**").hasRole("USER");
                     req.requestMatchers("/metas/**").hasRole("USER");
                     req.requestMatchers("/notas/**").hasRole("USER");
