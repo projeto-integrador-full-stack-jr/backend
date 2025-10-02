@@ -1,9 +1,13 @@
 package com.mentoria.back_end_mentoria.meta;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.usuario.Usuario;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +60,10 @@ public class MetaService {
             throw new ResourceNotFoundException("Meta não encontrada com o id: " + id);
         }
         metaRepository.deleteById(id);
+    }
+
+    private Usuario getUsuarioLogado() {    
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     private void copyDtoToEntity(MetaDTO dto, Meta entity) {
