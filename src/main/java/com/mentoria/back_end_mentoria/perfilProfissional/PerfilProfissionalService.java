@@ -86,6 +86,16 @@ public class PerfilProfissionalService {
         return new PerfilProfissionalDTO(entity);
     }
 
+    @Transactional
+    public void deleteMyProfile() {
+        Usuario usuarioLogado = getUsuarioLogado();
+        
+        PerfilProfissional entity = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil profissional não encontrado para o usuário logado. Nada a deletar."));
+
+        perfilProfissionalRepository.deleteById(entity.getPerfilId());
+    }
+
     private Usuario getUsuarioLogado() {    
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

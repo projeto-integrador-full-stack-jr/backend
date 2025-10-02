@@ -60,5 +60,11 @@ public class PerfilProfissionalController {
         PerfilProfissionalDTO perfilAtualizado = perfilProfissionalService.createOrUpdateMyProfile(dto);
         return ResponseEntity.ok().body(perfilAtualizado);
     }
+
+    @DeleteMapping("/meu")
+    public ResponseEntity<Void> deleteMyProfile() {
+        perfilProfissionalService.deleteMyProfile();
+        return ResponseEntity.noContent().build();
+    }
     
 }
