@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_usuario")
+@Table(name = "tb_usuario", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class Usuario implements Serializable, UserDetails {
 
     @Id
@@ -24,6 +24,7 @@ public class Usuario implements Serializable, UserDetails {
     private UUID usuarioId;
 
     @Embedded
+    @Column(unique = true)
     private Email email;
 
     @Embedded
