@@ -1,6 +1,7 @@
 package com.mentoria.back_end_mentoria.usuario;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,10 +59,36 @@ public class UsuarioService {
         }
     }
 
+    @Transactional
+    public Usuario updateMyUser(UsuarioDTO dto) {
+        Usuario entity = getUsuarioLogado();
+
+        entity.setEmail(new Email(dto.getEmail()));
+        
+        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
+            String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+            entity.getSenha().setValor(senhaCriptografada);
+        }
+        
+        return usuarioRepository.save(entity);
+    }
+
     public void delete(UUID id) {
         if (!usuarioRepository.existsById(id)) {
             throw new ResourceNotFoundException("Usuário não encontrado com o id: " + id);
         }
         usuarioRepository.deleteById(id);
+    }
+
+    public void deleteMyUser() {
+        Usuario usuarioLogado = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!usuarioRepository.existsById(usuarioLogado.getUsuarioId())) {
+            throw new ResourceNotFoundException("Usuário não encontrado com o id: " + usuarioLogado.getUsuarioId());
+        }
+        usuarioRepository.deleteById(usuarioLogado.getUsuarioId());
+    }
+
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

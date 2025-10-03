@@ -71,4 +71,16 @@ public class UsuarioController {
 
         return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
     }
+
+    @PutMapping("/eu")
+    public ResponseEntity<UsuarioDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
+        Usuario usuarioAtualizado = usuarioService.updateMyUser(dto);
+        return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
+    }
+
+    @DeleteMapping("/eu")
+    public ResponseEntity<Void> deleteMyUser() {
+        usuarioService.deleteMyUser();
+        return ResponseEntity.noContent().build();
+    }
 }

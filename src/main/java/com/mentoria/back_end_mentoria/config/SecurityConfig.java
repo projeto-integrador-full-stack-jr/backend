@@ -39,6 +39,8 @@ public class SecurityConfig {
                     // Rotas Privadas
                     // Rotas de Usuário (USER) e Administrador (ADMIN)
                     req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
+                    req.requestMatchers(HttpMethod.PUT, "/usuarios/eu").authenticated();
+                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/eu").authenticated();
                     // Perfil
                     req.requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated();
                     req.requestMatchers(HttpMethod.PUT, "/perfis/meu").authenticated();
