@@ -1,5 +1,6 @@
 package com.mentoria.back_end_mentoria.usuario;
 
+import com.mentoria.back_end_mentoria.usuario.vo.Senha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,25 +29,28 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario) {
-
+        if (usuario.getSenha() == null || usuario.getSenha().getValor() == null || usuario.getSenha().getValor().isBlank()) {
+            throw new IllegalArgumentException("A senha é obrigatória.");
+        }
         String password = usuario.getSenha().getValor();
-        String senhaCriptografada = passwordEncoder.encode(password);
-        usuario.getSenha().setValor(senhaCriptografada);
-
+        Senha senhaValidadaECodificada = new Senha(password);
+        String senhaCriptografada = passwordEncoder.encode(senhaValidadaECodificada.getValor());
+        senhaValidadaECodificada.setValor(senhaCriptografada);
+        usuario.setSenha(senhaValidadaECodificada);
         return usuarioRepository.save(usuario);
     }
 
     public Usuario findById(UUID id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
-    
+
     @Transactional
     public Usuario update(UUID id, UsuarioDTO dto) {
         try {
             Usuario entity = usuarioRepository.getReferenceById(id);
             entity.setEmail(new Email(dto.getEmail()));
             entity.setAcesso(dto.getAcesso()); // Supondo que você adicionará o getAcesso() ao DTO
-            
+
             // Lógica para atualizar senha apenas se uma nova for fornecida
             if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
                 String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
@@ -64,12 +68,12 @@ public class UsuarioService {
         Usuario entity = getUsuarioLogado();
 
         entity.setEmail(new Email(dto.getEmail()));
-        
+
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
             String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
             entity.getSenha().setValor(senhaCriptografada);
         }
-        
+
         return usuarioRepository.save(entity);
     }
 

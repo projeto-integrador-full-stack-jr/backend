@@ -14,6 +14,7 @@ public class UsuarioDTO {
     public UsuarioDTO(Usuario entity) {
         this.id = entity.getUsuarioId();
         this.email = entity.getEmail().getEmail();
+        this.senha = entity.getPassword();
         this.acesso = entity.getAcesso();
     }
 

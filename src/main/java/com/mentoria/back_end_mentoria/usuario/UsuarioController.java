@@ -47,9 +47,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<UsuarioDTO> save(@RequestBody Usuario usuario) {
         Usuario novoUsuario = usuarioService.save(usuario);
-
         UsuarioDTO usuarioDTO = new UsuarioDTO(novoUsuario);
-
         return ResponseEntity.ok().body(usuarioDTO);
     }
 
