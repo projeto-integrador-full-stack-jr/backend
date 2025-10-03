@@ -3,6 +3,7 @@ package com.mentoria.back_end_mentoria.usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -33,6 +35,15 @@ public class UsuarioController {
         return ResponseEntity.ok().body(listaDTO);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
+        Usuario usuario = usuarioService.findById(id);
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
+
+        return ResponseEntity.ok().body(usuarioDTO);
+    }
+
     @PostMapping
     public ResponseEntity<UsuarioDTO> save(@RequestBody Usuario usuario) {
         Usuario novoUsuario = usuarioService.save(usuario);
@@ -42,13 +53,16 @@ public class UsuarioController {
         return ResponseEntity.ok().body(usuarioDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
-        Usuario usuario = usuarioService.findById(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> update(@PathVariable UUID id, @RequestBody UsuarioDTO dto) {
+        Usuario usuarioAtualizado = usuarioService.update(id, dto);
+        return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
+    }
 
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
-
-        return ResponseEntity.ok().body(usuarioDTO);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/eu")

@@ -63,6 +63,8 @@ public class SecurityConfig {
                     // Usuários
                     req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN");
                     // Perfis
                     req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.GET, "/perfis/{id}").hasRole("ADMIN");

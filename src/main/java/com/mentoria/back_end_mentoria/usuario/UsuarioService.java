@@ -3,6 +3,12 @@ package com.mentoria.back_end_mentoria.usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.usuario.vo.Email;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,5 +37,31 @@ public class UsuarioService {
 
     public Usuario findById(UUID id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    } 
+    }
+    
+    @Transactional
+    public Usuario update(UUID id, UsuarioDTO dto) {
+        try {
+            Usuario entity = usuarioRepository.getReferenceById(id);
+            entity.setEmail(new Email(dto.getEmail()));
+            entity.setAcesso(dto.getAcesso()); // Supondo que você adicionará o getAcesso() ao DTO
+            
+            // Lógica para atualizar senha apenas se uma nova for fornecida
+            if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
+                String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+                entity.getSenha().setValor(senhaCriptografada);
+            }
+
+            return usuarioRepository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Usuário não encontrado com o id: " + id);
+        }
+    }
+
+    public void delete(UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Usuário não encontrado com o id: " + id);
+        }
+        usuarioRepository.deleteById(id);
+    }
 }
