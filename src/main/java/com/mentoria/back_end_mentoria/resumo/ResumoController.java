@@ -53,4 +53,12 @@ public class ResumoController {
         List<ResumoDTO> lista = resumoService.findMyResumos();
         return ResponseEntity.ok().body(lista);
     }
+
+    @PostMapping("/meus")
+    public ResponseEntity<ResumoDTO> insertMyResumo(@RequestBody ResumoDTO dto) {
+        ResumoDTO novoResumo = resumoService.insertMyResumo(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/resumos/{id}")
+                .buildAndExpand(novoResumo.getResumoId()).toUri();
+        return ResponseEntity.created(uri).body(novoResumo);
+    }
 }
