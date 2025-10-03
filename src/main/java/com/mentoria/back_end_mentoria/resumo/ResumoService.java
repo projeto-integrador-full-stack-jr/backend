@@ -11,6 +11,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,6 +107,25 @@ public class ResumoService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
         }
+    }
+
+    @Transactional
+    public ResumoDTO updateMyResumo(UUID resumoId, ResumoDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Resumo entity = resumoRepository.findById(resumoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
+
+        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode alterar seus próprios resumos.");
+        }
+
+        entity.setTitulo(new Titulo(dto.getTitulo()));
+        entity.setConteudo(new Conteudo(dto.getConteudo()));
+        entity = resumoRepository.save(entity);
+        return new ResumoDTO(entity);
     }
 
     @Transactional

@@ -61,4 +61,10 @@ public class ResumoController {
                 .buildAndExpand(novoResumo.getResumoId()).toUri();
         return ResponseEntity.created(uri).body(novoResumo);
     }
+
+    @PutMapping("/meus/{id}")
+    public ResponseEntity<ResumoDTO> updateMyResumo(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
+        ResumoDTO resumoAtualizado = resumoService.updateMyResumo(id, dto);
+        return ResponseEntity.ok().body(resumoAtualizado);
+    }
 }
