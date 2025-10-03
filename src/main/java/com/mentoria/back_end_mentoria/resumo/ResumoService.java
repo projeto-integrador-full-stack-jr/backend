@@ -3,6 +3,7 @@ package com.mentoria.back_end_mentoria.resumo;
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.usuario.Usuario;
 import com.mentoria.back_end_mentoria.vog.Conteudo;
 import com.mentoria.back_end_mentoria.vog.Titulo;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -41,6 +43,16 @@ public class ResumoService {
         Resumo entity = resumoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado"));
         return new ResumoDTO(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ResumoDTO> findMyResumos() {
+        Usuario usuarioLogado = getUsuarioLogado();
+        PerfilProfissional perfil = perfilProfissionalRepository.findByUsuarioUsuarioId(usuarioLogado.getUsuarioId())
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil profissional não encontrado para o usuário logado."));
+        
+        List<Resumo> lista = resumoRepository.findByPerfilProfissionalPerfilId(perfil.getPerfilId());
+        return lista.stream().map(ResumoDTO::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -82,6 +94,10 @@ public class ResumoService {
             throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
         }
         resumoRepository.deleteById(id);
+    }
+
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     private void gerarConteudoComIA(PerfilProfissional perfil, Resumo resumo) {

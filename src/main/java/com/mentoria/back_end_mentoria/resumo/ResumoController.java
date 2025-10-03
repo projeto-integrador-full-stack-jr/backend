@@ -47,4 +47,10 @@ public class ResumoController {
         resumoService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/meus")
+    public ResponseEntity<List<ResumoDTO>> findMyResumos() {
+        List<ResumoDTO> lista = resumoService.findMyResumos();
+        return ResponseEntity.ok().body(lista);
+    }
 }
