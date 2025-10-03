@@ -67,7 +67,8 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");
                     // Metas
                     req.requestMatchers(HttpMethod.GET, "/metas").hasRole("ADMIN");
-                    
+                    // Notas
+                    req.requestMatchers(HttpMethod.GET, "/notas").hasRole("ADMIN");
 
                     // Qualquer outra rota precisa de autenticação
                     req.anyRequest().authenticated();
