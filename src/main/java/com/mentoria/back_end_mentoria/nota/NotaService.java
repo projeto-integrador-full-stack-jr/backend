@@ -110,6 +110,22 @@ public class NotaService {
         notaRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteMyNota(UUID notaId) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Nota entity = notaRepository.findById(notaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Nota não encontrada com o id: " + notaId));
+
+        UUID idDonoDaNota = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDaNota)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode deletar suas próprias notas.");
+        }
+
+        notaRepository.deleteById(notaId);
+    }
+
     private Usuario getUsuarioLogado() {
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

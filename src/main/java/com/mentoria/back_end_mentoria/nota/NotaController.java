@@ -68,4 +68,10 @@ public class NotaController {
         NotaDTO notaAtualizada = notaService.updateMyNota(id, dto);
         return ResponseEntity.ok().body(notaAtualizada);
     }
+
+    @DeleteMapping("/minhas/{id}")
+    public ResponseEntity<Void> deleteMyNota(@PathVariable UUID id) {
+        notaService.deleteMyNota(id);
+        return ResponseEntity.noContent().build();
+    }
 }
