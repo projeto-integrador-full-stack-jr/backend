@@ -136,6 +136,22 @@ public class ResumoService {
         resumoRepository.deleteById(id);
     }
 
+    @Transactional
+    public void deleteMyResumo(UUID resumoId) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
+        Resumo entity = resumoRepository.findById(resumoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
+
+        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode deletar seus próprios resumos.");
+        }
+
+        resumoRepository.deleteById(resumoId);
+    }
+
     private Usuario getUsuarioLogado() {
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

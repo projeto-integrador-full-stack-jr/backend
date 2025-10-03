@@ -67,4 +67,10 @@ public class ResumoController {
         ResumoDTO resumoAtualizado = resumoService.updateMyResumo(id, dto);
         return ResponseEntity.ok().body(resumoAtualizado);
     }
+
+    @DeleteMapping("/meus/{id}")
+    public ResponseEntity<Void> deleteMyResumo(@PathVariable UUID id) {
+        resumoService.deleteMyResumo(id);
+        return ResponseEntity.noContent().build();
+    }
 }

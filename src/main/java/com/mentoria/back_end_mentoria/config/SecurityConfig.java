@@ -56,6 +56,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.PUT, "/resumos/meus/{id}").authenticated();
+                    req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
 
                     // Rotas de Usuário (USER e ADMIN)
                     req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
