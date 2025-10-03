@@ -37,6 +37,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
 
                     // Rotas Privadas
+                    // Rotas de Usuário (USER) e Administrador (ADMIN)
                     req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
                     // Perfil
                     req.requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated();
@@ -58,16 +59,12 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.PUT, "/resumos/meus/{id}").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
 
-                    // Rotas de Usuário (USER e ADMIN)
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
-                    req.requestMatchers("/perfis/**").hasRole("USER");
-                    req.requestMatchers("/metas/**").hasRole("USER");
-                    req.requestMatchers("/notas/**").hasRole("USER");
-                    req.requestMatchers("/resumos/**").hasRole("USER");
-
                     // Rotas de Administrador (ADMIN)
+                    // Usuários
                     req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN");
+                    // Perfis
+                    req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");
 
                     // Qualquer outra rota precisa de autenticação
                     req.anyRequest().authenticated();
