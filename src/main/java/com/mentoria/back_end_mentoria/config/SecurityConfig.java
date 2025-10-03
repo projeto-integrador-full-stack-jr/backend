@@ -83,6 +83,10 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.DELETE, "/notas/{id}").hasRole("ADMIN");
                     // Resumos
                     req.requestMatchers(HttpMethod.GET, "/resumos").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/resumos/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.POST, "/resumos").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/resumos/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/resumos/{id}").hasRole("ADMIN");
 
                     // Qualquer outra rota precisa de autenticação
                     req.anyRequest().authenticated();
