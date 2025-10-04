@@ -49,11 +49,12 @@ public class UsuarioService {
         try {
             Usuario entity = usuarioRepository.getReferenceById(id);
             entity.setEmail(new Email(dto.getEmail()));
-            entity.setAcesso(dto.getAcesso()); // Supondo que você adicionará o getAcesso() ao DTO
+            entity.setAcesso(dto.getAcesso());
 
-            // Lógica para atualizar senha apenas se uma nova for fornecida
             if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-                String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+                String password = dto.getSenha();
+                Senha senhaValidadaECodificada = new Senha(password);
+                String senhaCriptografada = passwordEncoder.encode(senhaValidadaECodificada.getValor());
                 entity.getSenha().setValor(senhaCriptografada);
             }
 

@@ -33,8 +33,8 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     // Rotas Públicas
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
+                    req.requestMatchers(HttpMethod.POST, "/login").permitAll(); //ok
+                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll(); //prov
 
                     // Rotas Privadas
                     // Rotas de Usuário (USER) e Administrador (ADMIN)
@@ -63,9 +63,9 @@ public class SecurityConfig {
 
                     // Rotas de Administrador (ADMIN)
                     // Usuários
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN"); //ok
                     req.requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN");
                     // Perfis
                     req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");

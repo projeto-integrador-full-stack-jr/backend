@@ -11,6 +11,9 @@ public class UsuarioDTO {
     private String senha;
     private UserRole acesso;
 
+    public UsuarioDTO() {
+    }
+
     public UsuarioDTO(Usuario entity) {
         this.id = entity.getUsuarioId();
         this.email = entity.getEmail().getEmail();
