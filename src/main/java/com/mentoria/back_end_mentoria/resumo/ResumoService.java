@@ -62,7 +62,6 @@ public class ResumoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado"));
 
         Resumo entity = new Resumo();
-//        entity.setResumoId(UUID.randomUUID());
         entity.setPerfilProfissional(perfil);
 
         if (!StringUtils.hasText(dto.getConteudo())) {
@@ -96,37 +95,37 @@ public class ResumoService {
         return new ResumoDTO(entity);
     }
 
-    @Transactional
-    public ResumoDTO update(UUID id, ResumoDTO dto) {
-        try {
-            Resumo entity = resumoRepository.getReferenceById(id);
-            entity.setTitulo(new Titulo(dto.getTitulo()));
-            entity.setConteudo(new Conteudo(dto.getConteudo()));
-            entity = resumoRepository.save(entity);
-            return new ResumoDTO(entity);
-        } catch (EntityNotFoundException e) {
-            throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
-        }
-    }
+//    @Transactional
+//    public ResumoDTO update(UUID id, ResumoDTO dto) {
+//        try {
+//            Resumo entity = resumoRepository.getReferenceById(id);
+//            entity.setTitulo(new Titulo(dto.getTitulo()));
+//            entity.setConteudo(new Conteudo(dto.getConteudo()));
+//            entity = resumoRepository.save(entity);
+//            return new ResumoDTO(entity);
+//        } catch (EntityNotFoundException e) {
+//            throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
+//        }
+//    }
 
-    @Transactional
-    public ResumoDTO updateMyResumo(UUID resumoId, ResumoDTO dto) {
-        Usuario usuarioLogado = getUsuarioLogado();
-
-        Resumo entity = resumoRepository.findById(resumoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
-
-        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
-
-        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
-            throw new AccessDeniedException("Acesso negado. Você só pode alterar seus próprios resumos.");
-        }
-
-        entity.setTitulo(new Titulo(dto.getTitulo()));
-        entity.setConteudo(new Conteudo(dto.getConteudo()));
-        entity = resumoRepository.save(entity);
-        return new ResumoDTO(entity);
-    }
+//    @Transactional
+//    public ResumoDTO updateMyResumo(UUID resumoId, ResumoDTO dto) {
+//        Usuario usuarioLogado = getUsuarioLogado();
+//
+//        Resumo entity = resumoRepository.findById(resumoId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
+//
+//        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
+//
+//        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
+//            throw new AccessDeniedException("Acesso negado. Você só pode alterar seus próprios resumos.");
+//        }
+//
+//        entity.setTitulo(new Titulo(dto.getTitulo()));
+//        entity.setConteudo(new Conteudo(dto.getConteudo()));
+//        entity = resumoRepository.save(entity);
+//        return new ResumoDTO(entity);
+//    }
 
     @Transactional
     public void delete(UUID id) {

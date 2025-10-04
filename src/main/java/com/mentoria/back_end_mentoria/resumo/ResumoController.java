@@ -36,11 +36,11 @@ public class ResumoController {
         return ResponseEntity.created(uri).body(novoResumoDto);
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<ResumoDTO> update(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
-        ResumoDTO resumoAtualizado = resumoService.update(id, dto);
-        return ResponseEntity.ok().body(resumoAtualizado);
-    }
+//    @PutMapping(value = "/{id}")
+//    public ResponseEntity<ResumoDTO> update(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
+//        ResumoDTO resumoAtualizado = resumoService.update(id, dto);
+//        return ResponseEntity.ok().body(resumoAtualizado);
+//    }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
@@ -62,11 +62,11 @@ public class ResumoController {
         return ResponseEntity.created(uri).body(novoResumo);
     }
 
-    @PutMapping("/meus/{id}")
-    public ResponseEntity<ResumoDTO> updateMyResumo(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
-        ResumoDTO resumoAtualizado = resumoService.updateMyResumo(id, dto);
-        return ResponseEntity.ok().body(resumoAtualizado);
-    }
+//    @PutMapping("/meus/{id}")
+//    public ResponseEntity<ResumoDTO> updateMyResumo(@PathVariable UUID id, @RequestBody ResumoDTO dto) {
+//        ResumoDTO resumoAtualizado = resumoService.updateMyResumo(id, dto);
+//        return ResponseEntity.ok().body(resumoAtualizado);
+//    }
 
     @DeleteMapping("/meus/{id}")
     public ResponseEntity<Void> deleteMyResumo(@PathVariable UUID id) {

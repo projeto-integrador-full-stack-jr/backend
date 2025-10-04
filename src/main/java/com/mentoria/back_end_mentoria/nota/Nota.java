@@ -17,7 +17,7 @@ public class Nota implements Serializable {
     private UUID notaId;
 
     @ManyToOne
-    @JoinColumn(name = "perfilProfissional_id")
+    @JoinColumn(name = "perfilProfissional_id", nullable = false)
     private PerfilProfissional perfilProfissional;
 
     @Embedded

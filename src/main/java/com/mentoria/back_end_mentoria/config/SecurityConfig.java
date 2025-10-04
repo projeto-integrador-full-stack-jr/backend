@@ -58,7 +58,7 @@ public class SecurityConfig {
                     //Resumos
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/resumos/meus/{id}").authenticated();
+                    //req.requestMatchers(HttpMethod.PUT, "/resumos/meus/{id}").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
 
                     // Rotas de Administrador (ADMIN)
@@ -66,31 +66,31 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN"); //ok
                     req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN"); //ok
                     req.requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN"); //ok
-                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN"); //ok
                     // Perfis
-                    req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/perfis/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/perfis").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/perfis/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/perfis/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.GET, "/perfis/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.POST, "/perfis").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/perfis/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/perfis/{id}").hasRole("ADMIN"); //ok
                     // Metas
-                    req.requestMatchers(HttpMethod.GET, "/metas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/metas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/metas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/metas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/metas/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/metas").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.GET, "/metas/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.POST, "/metas").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/metas/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/metas/{id}").hasRole("ADMIN"); //ok
                     // Notas
-                    req.requestMatchers(HttpMethod.GET, "/notas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/notas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/notas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/notas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/notas/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/notas").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.GET, "/notas/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.POST, "/notas").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/notas/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/notas/{id}").hasRole("ADMIN"); //ok
                     // Resumos
-                    req.requestMatchers(HttpMethod.GET, "/resumos").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/resumos/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/resumos").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/resumos/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/resumos/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/resumos").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.GET, "/resumos/{id}").hasRole("ADMIN"); //ok
+                    req.requestMatchers(HttpMethod.POST, "/resumos").hasRole("ADMIN"); //ok
+                    //req.requestMatchers(HttpMethod.PUT, "/resumos/{id}").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/resumos/{id}").hasRole("ADMIN"); //ok
 
                     // Qualquer outra rota precisa de autenticação
                     req.anyRequest().authenticated();

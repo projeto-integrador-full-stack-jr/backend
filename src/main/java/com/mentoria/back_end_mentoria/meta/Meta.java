@@ -22,7 +22,7 @@ public class Meta implements Serializable {
     private Long version;
 
     @ManyToOne
-    @JoinColumn(name = "perfilProfissional_id")
+    @JoinColumn(name = "perfilProfissional_id", nullable = false)
     private PerfilProfissional perfilProfissional;
 
     @Embedded
