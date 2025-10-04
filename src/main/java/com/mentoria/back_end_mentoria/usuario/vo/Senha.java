@@ -1,5 +1,8 @@
 package com.mentoria.back_end_mentoria.usuario.vo;
 
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class Senha {
 
     private String valor;

@@ -107,13 +107,9 @@ public class PerfilProfissionalService {
         entity.setExperiencia(dto.getExperiencia());
         entity.setObjetivoPrincipal(dto.getObjetivoPrincipal());
 
-        // Associa o usuário ao perfil
         if (dto.getUsuarioId() != null) {
             entity.setUsuario(usuarioRepository.findById(dto.getUsuarioId())
                     .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado para o perfil")));
         }
-
-        // REMOVA a linha abaixo, ela causa o erro
-        // entity.setResumosIds(dto.getResumosIds());
     }
 }

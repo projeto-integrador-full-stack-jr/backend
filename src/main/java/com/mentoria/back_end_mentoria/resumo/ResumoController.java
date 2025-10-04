@@ -29,8 +29,8 @@ public class ResumoController {
     }
 
     @PostMapping
-    public ResponseEntity<ResumoDTO> insert(@RequestBody ResumoDTO dto) {
-        ResumoDTO novoResumoDto = resumoService.insert(dto);
+    public ResponseEntity<ResumoDTO> insert(@RequestBody CreateResumoRequest request) {
+        ResumoDTO novoResumoDto = resumoService.insert(request.getPerfilProfissionalId());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(novoResumoDto.getResumoId()).toUri();
         return ResponseEntity.created(uri).body(novoResumoDto);

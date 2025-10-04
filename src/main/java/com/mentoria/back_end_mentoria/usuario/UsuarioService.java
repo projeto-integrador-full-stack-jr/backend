@@ -99,7 +99,7 @@ public class UsuarioService {
         usuarioRepository.deleteById(usuarioLogado.getUsuarioId());
     }
 
-    private Usuario getUsuarioLogado() {
+    public Usuario getUsuarioLogado() {
         return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }

@@ -38,23 +38,23 @@ public class SecurityConfig {
 
                     // Rotas Privadas
                     // Rotas de Usuário (USER) e Administrador (ADMIN)
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/usuarios/eu").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/eu").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/usuarios/eu").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/eu").authenticated(); //ok
                     // Perfil
-                    req.requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/perfis/meu").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/perfis/meu").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/perfis/meu").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/perfis/meu").authenticated(); //ok
                     //Metas
-                    req.requestMatchers(HttpMethod.GET, "/metas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/metas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/metas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/metas/minhas/{id}").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/metas/minhas").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.POST, "/metas/minhas").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.PUT, "/metas/minhas/{id}").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/metas/minhas/{id}").authenticated(); //ok
                     //Notas
-                    req.requestMatchers(HttpMethod.GET, "/notas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/notas/minhas").authenticated(); 
-                    req.requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/notas/minhas").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.POST, "/notas/minhas").authenticated();  //ok
+                    req.requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated(); //ok
+                    req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated(); //ok
                     //Resumos
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();

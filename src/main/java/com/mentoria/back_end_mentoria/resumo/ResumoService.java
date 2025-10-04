@@ -57,19 +57,14 @@ public class ResumoService {
     }
 
     @Transactional
-    public ResumoDTO insert(ResumoDTO dto) {
-        PerfilProfissional perfil = perfilProfissionalRepository.findById(dto.getPerfilProfissionalId())
+    public ResumoDTO insert(UUID perfilProfissionalId) {
+        PerfilProfissional perfil = perfilProfissionalRepository.findById(perfilProfissionalId)
                 .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado"));
 
         Resumo entity = new Resumo();
         entity.setPerfilProfissional(perfil);
 
-        if (!StringUtils.hasText(dto.getConteudo())) {
-            gerarConteudoComIA(perfil, entity);
-        } else {
-            entity.setTitulo(new Titulo(dto.getTitulo()));
-            entity.setConteudo(new Conteudo(dto.getConteudo()));
-        }
+        gerarConteudoComIA(perfil, entity);
 
         entity = resumoRepository.save(entity);
         return new ResumoDTO(entity);

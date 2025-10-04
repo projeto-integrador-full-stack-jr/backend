@@ -64,9 +64,8 @@ public class UsuarioController {
     }
     
     @GetMapping("/eu")
-    public ResponseEntity<UsuarioDTO> getUsuarioLogado(Authentication authentication) {
-        Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
-
+    public ResponseEntity<UsuarioDTO> getMyUser() {
+        Usuario usuarioLogado = usuarioService.getUsuarioLogado();
         return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
     }
 
