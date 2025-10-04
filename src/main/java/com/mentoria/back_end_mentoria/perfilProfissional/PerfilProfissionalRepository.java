@@ -9,4 +9,6 @@ public interface PerfilProfissionalRepository extends JpaRepository<PerfilProfis
 
     Optional<PerfilProfissional> findByUsuarioUsuarioId(UUID id);
 
+    void deleteByUsuario_UsuarioId(UUID usuarioId);
+
 }

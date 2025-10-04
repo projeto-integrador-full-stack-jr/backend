@@ -1,5 +1,6 @@
 package com.mentoria.back_end_mentoria.usuario;
 
+import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
 import com.mentoria.back_end_mentoria.usuario.vo.Senha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PerfilProfissionalRepository perfilProfissionalRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -78,10 +82,12 @@ public class UsuarioService {
         return usuarioRepository.save(entity);
     }
 
+    @Transactional
     public void delete(UUID id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Usuário não encontrado com o id: " + id);
+            return;
         }
+        perfilProfissionalRepository.deleteByUsuario_UsuarioId(id);
         usuarioRepository.deleteById(id);
     }
 
