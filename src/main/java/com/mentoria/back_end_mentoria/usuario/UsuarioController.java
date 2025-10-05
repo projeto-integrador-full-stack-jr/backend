@@ -11,14 +11,14 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/usuarios")
-@Tag(name = "Usuários", description = "Endpoints para gerenciamento de Usuários")
+@Tag(name = "Usuários - Acesso Pessoal", description = "Endpoints para gerenciamento dos dados do próprio usuário.")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
     @GetMapping(value = "/listar")
-    @Operation(summary = "Lista todos os usuários (ADMIN)", description = "Retorna uma lista de todos os usuários cadastrados no sistema. Requer perfil de ADMIN.")
+    @Operation(summary = "[ADMIN] Lista todos os usuários", description = "Retorna uma lista de todos os usuários cadastrados no sistema. Requer perfil de ADMIN.", tags = {"Usuários - Admin"})
     public ResponseEntity<List<UsuarioDTO>> findAll() {
         List<Usuario> lista = usuarioService.findAll();
         List<UsuarioDTO> listaDTO = lista.stream().map(UsuarioDTO::new).toList();
@@ -26,7 +26,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca um usuário por ID (ADMIN)", description = "Retorna os detalhes de um usuário específico a partir do seu ID. Requer perfil de ADMIN.")
+    @Operation(summary = "[ADMIN] Busca um usuário por ID", description = "Retorna os detalhes de um usuário específico a partir do seu ID. Requer perfil de ADMIN.", tags = {"Usuários - Admin"})
     public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
         Usuario usuario = usuarioService.findById(id);
         UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
@@ -34,7 +34,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    @Operation(summary = "Cria um novo usuário (Público)", description = "Cria um novo usuário no sistema. Este endpoint é público.")
+    @Operation(summary = "[PÚBLICO] Cria um novo usuário", description = "Cria um novo usuário no sistema. Este endpoint é público.", tags = {"Usuários - Público"})
     public ResponseEntity<UsuarioDTO> save(@RequestBody Usuario usuario) {
         Usuario novoUsuario = usuarioService.save(usuario);
         UsuarioDTO usuarioDTO = new UsuarioDTO(novoUsuario);
@@ -42,35 +42,35 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualiza um usuário (ADMIN)", description = "Atualiza os dados de um usuário existente a partir do seu ID. Requer perfil de ADMIN.")
+    @Operation(summary = "[ADMIN] Atualiza um usuário", description = "Atualiza os dados de um usuário existente a partir do seu ID. Requer perfil de ADMIN.", tags = {"Usuários - Admin"})
     public ResponseEntity<UsuarioDTO> update(@PathVariable UUID id, @RequestBody UsuarioDTO dto) {
         Usuario usuarioAtualizado = usuarioService.update(id, dto);
         return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deleta um usuário (ADMIN)", description = "Remove um usuário do sistema a partir do seu ID. Requer perfil de ADMIN.")
+    @Operation(summary = "[ADMIN] Deleta um usuário", description = "Remove um usuário do sistema a partir do seu ID. Requer perfil de ADMIN.", tags = {"Usuários - Admin"})
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         usuarioService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/eu")
-    @Operation(summary = "Busca os dados do meu usuário", description = "Retorna os detalhes do usuário autenticado.")
+    @Operation(summary = "[USER] Busca os dados do meu usuário", description = "Retorna os detalhes do usuário autenticado.")
     public ResponseEntity<UsuarioDTO> getMyUser() {
         Usuario usuarioLogado = usuarioService.getUsuarioLogado();
         return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
     }
 
     @PutMapping("/eu")
-    @Operation(summary = "Atualiza os dados do meu usuário", description = "Atualiza os dados do usuário autenticado.")
+    @Operation(summary = "[USER] Atualiza os dados do meu usuário", description = "Atualiza os dados do usuário autenticado.")
     public ResponseEntity<UsuarioDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
         Usuario usuarioAtualizado = usuarioService.updateMyUser(dto);
         return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
     }
 
     @DeleteMapping("/eu")
-    @Operation(summary = "Deleta o meu usuário", description = "Remove o usuário autenticado do sistema.")
+    @Operation(summary = "[USER] Deleta o meu usuário", description = "Remove o usuário autenticado do sistema.")
     public ResponseEntity<Void> deleteMyUser() {
         usuarioService.deleteMyUser();
         return ResponseEntity.noContent().build();
