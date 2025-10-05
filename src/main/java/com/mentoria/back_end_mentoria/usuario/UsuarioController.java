@@ -1,6 +1,11 @@
 package com.mentoria.back_end_mentoria.usuario;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,21 +61,62 @@ public class UsuarioController {
     }
 
     @GetMapping("/eu")
-    @Operation(summary = "[USER] Busca os dados do meu usuário", description = "Retorna os detalhes do usuário autenticado.")
+    @Operation(summary = "[USER] Busca os dados do meu usuário", description = "Retorna os detalhes completos do usuário que está autenticado na sessão atual.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dados do usuário retornados com sucesso.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Exemplo de Resposta de Usuário",
+                                    value = """
+                                            {
+                                              "usuarioId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                                              "email": "usuario.exemplo@email.com",
+                                              "acesso": "USER"
+                                            }
+                                            """
+                            ))
+            }),
+            @ApiResponse(responseCode = "403", description = "Acesso negado. O usuário não está autenticado.",
+                    content = @Content)
+    })
     public ResponseEntity<UsuarioDTO> getMyUser() {
         Usuario usuarioLogado = usuarioService.getUsuarioLogado();
         return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
     }
 
     @PutMapping("/eu")
-    @Operation(summary = "[USER] Atualiza os dados do meu usuário", description = "Atualiza os dados do usuário autenticado.")
+    @Operation(summary = "[USER] Atualiza os dados do meu usuário", description = "Atualiza os dados do usuário autenticado. O ID é obtido pelo token de autenticação.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dados do usuário atualizados com sucesso.",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Exemplo de Usuário Atualizado",
+                                    value = """
+                                            {
+                                              "usuarioId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                                              "email": "novo.email@email.com",
+                                              "acesso": "USER"
+                                            }
+                                            """
+                            ))
+            }),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content)
+    })
     public ResponseEntity<UsuarioDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
         Usuario usuarioAtualizado = usuarioService.updateMyUser(dto);
         return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
     }
 
     @DeleteMapping("/eu")
-    @Operation(summary = "[USER] Deleta o meu usuário", description = "Remove o usuário autenticado do sistema.")
+    @Operation(summary = "[USER] Deleta o meu usuário", description = "Remove permanentemente o usuário autenticado do sistema. Esta ação não pode ser desfeita.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso.", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado para deleção.", content = @Content)
+    })
     public ResponseEntity<Void> deleteMyUser() {
         usuarioService.deleteMyUser();
         return ResponseEntity.noContent().build();

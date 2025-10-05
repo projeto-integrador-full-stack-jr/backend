@@ -29,7 +29,7 @@ public class SecurityConfig {
     @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/login", "/usuarios"))
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     // Rotas Públicas
