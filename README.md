@@ -1,101 +1,94 @@
-# MentorIA - Back-end
+# API do Projeto Mentoria
 
-## Sobre o projeto
-O **MentorIA - Back-end** é a API responsável por fornecer os serviços e a lógica de negócio do projeto **MentorIA**, uma plataforma inovadora que busca transformar o mercado da educação e apoiar profissionais em início ou meio de carreira.  
-
-Através da integração com **Inteligência Artificial (IA)**, a API oferece endpoints para gerenciamento de usuários, cursos, perfis profissionais e geração de mentorias personalizadas.  
-
-Construído em **Java 21** com **Spring Boot**, o sistema é escalável, seguro e preparado para integração com bancos de dados relacionais como **PostgreSQL** e bancos em memória como **H2** para testes e desenvolvimento.
+Esta é a API back-end para o Projeto Mentoria, uma plataforma projetada para auxiliar no desenvolvimento e planejamento de carreira de profissionais de tecnologia. A API oferece um conjunto de endpoints para gerenciar usuários, perfis, metas, notas e gerar resumos de carreira personalizados com o auxílio de Inteligência Artificial.
 
 ---
 
-## Tecnologias utilizadas
+## ✨ Funcionalidades Principais
 
-- [Java 21](https://openjdk.org/projects/jdk/21/) - Linguagem principal usada no desenvolvimento do back-end.
-- [Spring Boot](https://spring.io/projects/spring-boot) - Framework que simplifica a criação de aplicações Java com configuração mínima.
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa) - Para persistência e manipulação de dados em bancos relacionais.
-- [Spring Security](https://spring.io/projects/spring-security) - Para autenticação, autorização e segurança da aplicação.
-- [Spring AI](https://spring.io/projects/spring-ai) - Integração com modelos de IA, incluindo leitura de documentos PDF e modelos da OpenAI.
-- [H2 Database](https://www.h2database.com/) - Banco de dados em memória utilizado em ambiente de desenvolvimento e testes.
-- [PostgreSQL](https://www.postgresql.org/) - Banco de dados relacional utilizado em ambiente de produção.
-- [Maven](https://maven.apache.org/) - Gerenciador de dependências e build da aplicação.
-- [JUnit](https://junit.org/) - Framework de testes unitários.
+- **Autenticação e Autorização**: Sistema de login seguro com JSON Web Tokens (JWT) e controle de acesso baseado em papéis (`USER` e `ADMIN`).
+- **Gerenciamento de Usuários**: Endpoints para criação, visualização, atualização e exclusão de usuários.
+- **Perfis Profissionais**: Criação e gestão de perfis detalhados, incluindo cargo, carreira, experiência e objetivos.
+- **Gestão de Metas**: Definição e acompanhamento de metas de carreira.
+- **Notas Pessoais**: Funcionalidade para criar e gerenciar notas rápidas.
+- **Resumos com IA**: Geração automática de resumos de carreira e planos de desenvolvimento utilizando a API da OpenAI, com base nos dados do perfil do usuário.
 
 ---
 
-## Estrutura do projeto
+## 🛠️ Tecnologias Utilizadas
 
-```
-back-end-mentoria/
-│── src/
-│   ├── main/
-│   │   ├── java/com/mentoria/back_end_mentoria/   # Código-fonte principal
-│   │   └── resources/                             # Arquivos de configuração (application.yml/properties)
-│   └── test/                                      # Testes automatizados
-│── pom.xml                                        # Configuração do Maven e dependências
-```
+- **Java 21**: Versão mais recente da linguagem Java.
+- **Spring Boot 3.3.0**: Framework principal para a construção da aplicação.
+- **Spring Security**: Para a camada de autenticação e autorização.
+- **Spring Data JPA**: Para a persistência de dados com o banco de dados.
+- **Spring AI**: Para integração com a API da OpenAI.
+- **Maven**: Gerenciador de dependências e build do projeto.
+- **PostgreSQL**: Banco de dados relacional para o ambiente de produção.
+- **H2**: Banco de dados em memória para os testes.
+- **Swagger (OpenAPI 3)**: Para documentação interativa da API.
 
 ---
 
-## Como executar o projeto
+## 🚀 Como Executar o Projeto
+
+Siga os passos abaixo para configurar e executar a aplicação em seu ambiente local.
 
 ### 1. Pré-requisitos
-- [Java 21+](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) instalado.
-- [Maven](https://maven.apache.org/download.cgi) instalado (caso não use o embutido no IntelliJ).
-- [PostgreSQL](https://www.postgresql.org/download/) configurado (opcional, apenas para ambiente de produção).
 
-### 2. Clone o repositório
-```bash
-git clone https://github.com/projeto-integrador-full-stack-jr/back-end.git
-cd back-end-mentoria
+- **JDK 21** (ou superior)
+- **Apache Maven 3.9+**
+- Uma **chave de API da OpenAI**
+
+### 2. Configuração do Ambiente
+
+A aplicação requer duas variáveis de ambiente para funcionar corretamente:
+
+- `JWT_SECRET`: Uma chave secreta forte para a assinatura dos tokens JWT. 
+- `OPENAI-API-KEY`: A sua chave de API da OpenAI.
+
+Você pode configurar essas variáveis diretamente no seu sistema operacional ou criar um arquivo `run.env` na raiz do projeto com o seguinte conteúdo:
+
+```sh
+JWT_SECRET=seu_segredo_super_secreto_e_longo_aqui
+ALEF_API_KEY=sua_chave_da_openai_aqui
 ```
 
-### 3. Rodando no IntelliJ IDEA
-1. Abra o IntelliJ IDEA.
-2. Vá em **File > Open** e selecione a pasta `back-end-mentoria`.
-3. O IntelliJ reconhecerá o projeto Maven automaticamente e baixará as dependências.
-4. Configure o SDK do projeto para **Java 21** em  
-   `File > Project Structure > Project > SDK`.
-5. Execute a classe principal (geralmente `BackEndMentoriaApplication.java`) clicando em **Run**.
+**Observação sobre o Banco de Dados:** O perfil de produção (`prod`) está configurado para usar um banco de dados PostgreSQL na nuvem (Neon). As credenciais estão no arquivo `application-prod.properties`. Para usar um banco de dados local, você pode alterar este arquivo ou criar um novo perfil no Spring.
 
-### 4. Rodando pelo terminal
+### 3. Executando a Aplicação
+
+Com as variáveis de ambiente configuradas, execute o seguinte comando na raiz do projeto:
+
 ```bash
+# No Windows
+./mvnw spring-boot:run
+
+# No Linux ou macOS
 ./mvnw spring-boot:run
 ```
 
-### 5. Acessando a aplicação
-Por padrão, a API ficará disponível em:  
-👉 `http://localhost:8080`
+A API estará disponível em `http://localhost:8080`.
 
 ---
 
-## Bancos de dados
+## 📚 Documentação da API (Swagger)
 
-### Ambiente de desenvolvimento/testes
-O projeto já vem configurado para usar **H2 Database** em memória.  
-Acesse o console do H2 em:  
-👉 `http://localhost:8080/h2-console`  
-JDBC URL (padrão): `jdbc:h2:mem:testdb`
+Após iniciar a aplicação, a documentação completa e interativa da API, gerada com Swagger, pode ser acessada no seu navegador através do seguinte endereço:
 
-### Ambiente de produção
-Para usar **PostgreSQL**, configure o arquivo `application.properties` ou `application.yml`:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/mentoria
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-```
+[**http://localhost:8080/swagger-ui/index.html**](http://localhost:8080/swagger-ui/index.html)
+
+Lá você encontrará todos os endpoints, seus parâmetros, corpos de requisição e respostas, além de poder testá-los diretamente.
 
 ---
 
-## Testes
-Para rodar os testes:
+## ✅ Executando os Testes
+
+O projeto possui uma suíte de testes unitários e de integração para garantir a qualidade e o correto funcionamento do código. Para executar todos os testes, utilize o comando:
+
 ```bash
+# No Windows
+./mvnw test
+
+# No Linux ou macOS
 ./mvnw test
 ```
-
----
-
-## Licença
-Este projeto é distribuído sob a licença MIT.

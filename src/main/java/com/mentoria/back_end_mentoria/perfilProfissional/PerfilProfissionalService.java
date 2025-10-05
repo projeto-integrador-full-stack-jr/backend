@@ -79,8 +79,11 @@ public class PerfilProfissionalService {
                 .orElse(new PerfilProfissional()); 
         
         entity.setUsuario(usuarioLogado);
-        
-        copyDtoToEntity(dto, entity);
+        entity.setNomeUsuario(dto.getNomeUsuario());
+        entity.setCargo(dto.getCargo());
+        entity.setCarreira(dto.getCarreira());
+        entity.setExperiencia(dto.getExperiencia());
+        entity.setObjetivoPrincipal(dto.getObjetivoPrincipal());
         
         entity = perfilProfissionalRepository.save(entity);
         return new PerfilProfissionalDTO(entity);

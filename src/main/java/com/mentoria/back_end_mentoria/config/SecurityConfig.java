@@ -29,10 +29,11 @@ public class SecurityConfig {
     @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/login", "/usuarios"))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     // Rotas Públicas
+                    req.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll(); //ok
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll(); //prov
 

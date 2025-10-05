@@ -66,8 +66,8 @@ public class NotaService {
         Nota entity = new Nota();
         
         entity.setPerfilProfissional(perfil);
-        
-        copyDtoToEntity(dto, entity);
+        entity.setTitulo(new Titulo(dto.getTitulo()));
+        entity.setConteudo(new Conteudo(dto.getConteudo()));
 
         entity = notaRepository.save(entity);
         return new NotaDTO(entity);
