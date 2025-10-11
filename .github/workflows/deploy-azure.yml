@@ -26,9 +26,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      - name: Verify build artifact
-        run: ls -l target/
-
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -38,7 +35,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: './target/*.jar'
+          package: './target/back-end-mentoria-*.jar'
 
       - name: Azure Logout
         run: az logout
