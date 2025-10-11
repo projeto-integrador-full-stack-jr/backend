@@ -24,7 +24,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Build with Maven
-        working-directory: ./back-end-mentori-ia
+        working-directory: ./back-end-mentoria
         run: mvn clean package -DskipTests
 
       - name: Azure Login
@@ -36,7 +36,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: './back-end-mentori-ia/target/*.jar'
+          package: './back-end-mentoria/target/*.jar'
 
       - name: Azure Logout
         run: az logout
