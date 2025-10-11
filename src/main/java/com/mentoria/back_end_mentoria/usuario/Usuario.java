@@ -9,6 +9,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
@@ -28,6 +31,7 @@ public class Usuario implements Serializable, UserDetails {
     private Email email;
 
     @Embedded
+    @AttributeOverride(name = "valor", column = @Column(name = "senha"))
     private Senha senha;
 
     private UserRole acesso;
