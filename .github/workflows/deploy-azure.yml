@@ -17,6 +17,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check directory structure
+        run: ls -R /home/runner/work/
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
