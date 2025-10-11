@@ -24,6 +24,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
 
       - name: Build with Maven
+        working-directory: ./backend
         run: mvn clean package -DskipTests
 
       - name: Azure Login
@@ -35,7 +36,17 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+
           package: './target/back-end-mentoria-0.0.1-SNAPSHOT.jar'
+          app-settings-json: |
+            [
+                { "name": "SPRING_PROFILES_ACTIVE", "value": "prod", "slotSetting": false },
+                { "name": "SPRING_DATASOURCE_URL", "value": "${{ secrets.DB_URL }}", "slotSetting": false },
+                { "name": "SPRING_DATASOURCE_USERNAME", "value": "${{ secrets.DB_USERNAME }}", "slotSetting": false },
+                { "name": "SPRING_DATASOURCE_PASSWORD", "value": "${{ secrets.DB_PASSWORD }}", "slotSetting": false },
+                { "name": "API_SECURITY_TOKEN_SECRET", "value": "${{ secrets.JWT_SECRET }}", "slotSetting": false }
+                { "name": "OPENAI_KEY", "value": "${{ secrets.OPENAI_KEY }}", "slotSetting": false },
+            ]
 
       - name: Azure Logout
         run: az logout
