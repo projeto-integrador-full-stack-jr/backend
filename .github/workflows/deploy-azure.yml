@@ -35,7 +35,7 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: './target/back-end-mentoria-*.jar'
+          package: './target/back-end-mentoria-0.0.1-SNAPSHOT.jar'
 
       - name: Azure Logout
         run: az logout
