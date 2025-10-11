@@ -23,7 +23,15 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ env.JAVA_VERSION }}
 
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
       - name: Build with Maven
+        working-directory: ./
         run: mvn clean package -DskipTests
 
       - name: Azure Login
@@ -31,21 +39,24 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Set Azure App Service settings
+        run: |
+          az webapp config appsettings set \
+            --name ${{ env.AZURE_WEBAPP_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --settings \
+              SPRING_PROFILES_ACTIVE=prod \
+              SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
+              SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+              SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              API_SECURITY_TOKEN_SECRET=${{ secrets.JWT_SECRET }} \
+              OPENAI_KEY=${{ secrets.OPENAI_KEY }}
+
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-
-          package: './target/back-end-mentoria-0.0.1-SNAPSHOT.jar'
-          app-settings-json: |
-            [
-                { "name": "SPRING_PROFILES_ACTIVE", "value": "prod", "slotSetting": false },
-                { "name": "SPRING_DATASOURCE_URL", "value": "${{ secrets.DB_URL }}", "slotSetting": false },
-                { "name": "SPRING_DATASOURCE_USERNAME", "value": "${{ secrets.DB_USERNAME }}", "slotSetting": false },
-                { "name": "SPRING_DATASOURCE_PASSWORD", "value": "${{ secrets.DB_PASSWORD }}", "slotSetting": false },
-                { "name": "API_SECURITY_TOKEN_SECRET", "value": "${{ secrets.JWT_SECRET }}", "slotSetting": false }
-                { "name": "OPENAI_KEY", "value": "${{ secrets.OPENAI_KEY }}", "slotSetting": false },
-            ]
+          package: ./backend/target/back-end-mentoria-*.jar
 
       - name: Azure Logout
         run: az logout
