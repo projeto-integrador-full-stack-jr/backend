@@ -1,5 +1,6 @@
 package com.mentoria.back_end_mentoria.usuario;
 
+import com.mentoria.back_end_mentoria.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,6 +22,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @GetMapping(value = "/listar")
     @Operation(summary = "[ADMIN] Lista todos os usuários", description = "Retorna uma lista de todos os usuários cadastrados no sistema. Requer perfil de ADMIN.", tags = {"Usuários - Admin"})
@@ -76,7 +80,7 @@ public class UsuarioController {
                                             }
                                             """
                             ))
-            }),
+                    }),
             @ApiResponse(responseCode = "403", description = "Acesso negado. O usuário não está autenticado.",
                     content = @Content)
     })
@@ -90,24 +94,32 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados do usuário atualizados com sucesso.",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UsuarioDTO.class),
+                            schema = @Schema(implementation = AuthResponseDTO.class),
                             examples = @ExampleObject(
                                     name = "Exemplo de Usuário Atualizado",
                                     value = """
                                             {
-                                              "usuarioId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-                                              "email": "novo.email@email.com",
-                                              "acesso": "USER"
+                                              "usuario": {
+                                                "usuarioId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+                                                "email": "novo.email@email.com",
+                                                "acesso": "USER"
+                                              },
+                                              "token": "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUEkgTWVudG9y..."
                                             }
                                             """
                             ))
-            }),
+                    }),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos.", content = @Content),
             @ApiResponse(responseCode = "403", description = "Acesso negado.", content = @Content)
     })
-    public ResponseEntity<UsuarioDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<AuthResponseDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
         Usuario usuarioAtualizado = usuarioService.updateMyUser(dto);
-        return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
+        String novoToken = tokenService.gerarToken(usuarioAtualizado);
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioAtualizado);
+
+        AuthResponseDTO response = new AuthResponseDTO(usuarioDTO, novoToken);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/eu")
@@ -121,4 +133,6 @@ public class UsuarioController {
         usuarioService.deleteMyUser();
         return ResponseEntity.noContent().build();
     }
+
+    public record AuthResponseDTO(UsuarioDTO usuario, String token) {}
 }
