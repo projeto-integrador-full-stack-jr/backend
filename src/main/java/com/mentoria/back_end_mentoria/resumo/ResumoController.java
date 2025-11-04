@@ -54,6 +54,13 @@ public class ResumoController {
         return ResponseEntity.ok().body(lista);
     }
 
+    @GetMapping(value = "/meus/{id}")
+    @Operation(summary = "[USER] Resumo por ID", description = "Retorna um resumo com base no UUID passado por paramentro, muito parecido com o delete, porém muda o verbo HTTP")
+    public ResponseEntity<ResumoDTO> findMyResumo(@PathVariable UUID id) {
+        ResumoDTO dto = resumoService.findMyResumoPerID(id);
+        return ResponseEntity.ok().body(dto);
+    }
+
     @PostMapping(value = "/meus")
     @Operation(summary = "[USER] Gera um novo resumo para mim", description = "Gera um novo resumo de carreira via IA para o usuário autenticado.")
     public ResponseEntity<ResumoDTO> insertMyResumo() {
