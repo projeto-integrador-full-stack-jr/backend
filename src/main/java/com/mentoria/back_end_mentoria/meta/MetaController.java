@@ -11,42 +11,46 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/metas")
-@Tag(name = "Metas - Acesso Pessoal", description = "Endpoints para gerenciamento das metas do próprio usuário.")
 public class MetaController {
 
     @Autowired
     private MetaService metaService;
 
+    @Tag(name = "Metas Admin")
     @GetMapping
-    @Operation(summary = "[ADMIN] Lista todas as metas", description = "Retorna uma lista de todas as metas cadastradas no sistema. Requer perfil de ADMIN.", tags = {"Metas - Admin"})
+    @Operation(summary = "[ADMIN] Lista todas as metas", description = "Retorna uma lista de todas as metas cadastradas no sistema. Requer perfil de ADMIN.")
     public ResponseEntity<List<MetaDTO>> findAll() {
         List<MetaDTO> lista = metaService.findAll();
         return ResponseEntity.ok().body(lista);
     }
 
+    @Tag(name = "Metas Admin")
     @GetMapping(value = "/{id}")
-    @Operation(summary = "[ADMIN] Busca uma meta por ID", description = "Retorna os detalhes de uma meta específica a partir do seu ID. Requer perfil de ADMIN.", tags = {"Metas - Admin"})
+    @Operation(summary = "[ADMIN] Busca uma meta por ID", description = "Retorna os detalhes de uma meta específica a partir do seu ID. Requer perfil de ADMIN.")
     public ResponseEntity<MetaDTO> findById(@PathVariable UUID id) {
         MetaDTO dto = metaService.findById(id);
         return ResponseEntity.ok().body(dto);
     }
 
+    @Tag(name = "Metas Admin")
     @PostMapping
-    @Operation(summary = "[ADMIN] Cria uma nova meta", description = "Cria uma nova meta associada a um perfil profissional. Requer perfil de ADMIN.", tags = {"Metas - Admin"})
+    @Operation(summary = "[ADMIN] Cria uma nova meta", description = "Cria uma nova meta associada a um perfil profissional. Requer perfil de ADMIN.")
     public ResponseEntity<MetaDTO> insert(@RequestBody MetaDTO dto) {
         dto = metaService.insert(dto);
         return ResponseEntity.ok().body(dto);
     }
 
+    @Tag(name = "Metas Admin")
     @PutMapping(value = "/{id}")
-    @Operation(summary = "[ADMIN] Atualiza uma meta", description = "Atualiza os dados de uma meta existente a partir do seu ID. Requer perfil de ADMIN.", tags = {"Metas - Admin"})
+    @Operation(summary = "[ADMIN] Atualiza uma meta", description = "Atualiza os dados de uma meta existente a partir do seu ID. Requer perfil de ADMIN.")
     public ResponseEntity<MetaDTO> update(@PathVariable UUID id, @RequestBody MetaDTO dto) {
         dto = metaService.update(id, dto);
         return ResponseEntity.ok().body(dto);
     }
 
+    @Tag(name = "Metas Admin")
     @DeleteMapping(value = "/{id}")
-    @Operation(summary = "[ADMIN] Deleta uma meta", description = "Remove uma meta do sistema a partir do seu ID. Requer perfil de ADMIN.", tags = {"Metas - Admin"})
+    @Operation(summary = "[ADMIN] Deleta uma meta", description = "Remove uma meta do sistema a partir do seu ID. Requer perfil de ADMIN.")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         metaService.delete(id);
         return ResponseEntity.noContent().build();
@@ -54,6 +58,7 @@ public class MetaController {
 
     // Meus Endpoints
 
+    @Tag(name = "Metas User")
     @GetMapping(value = "/minhas")
     @Operation(summary = "[USER] Lista minhas metas", description = "Retorna uma lista de todas as metas associadas ao usuário autenticado.")
     public ResponseEntity<List<MetaDTO>> findMyMetas() {
@@ -61,6 +66,7 @@ public class MetaController {
         return ResponseEntity.ok().body(lista);
     }
 
+    @Tag(name = "Metas User")
     @PostMapping(value = "/minhas")
     @Operation(summary = "[USER] Cria uma nova meta para mim", description = "Cria uma nova meta associada ao perfil do usuário autenticado.")
     public ResponseEntity<MetaDTO> insertMyMeta(@RequestBody MetaDTO dto) {
@@ -68,6 +74,7 @@ public class MetaController {
         return ResponseEntity.ok().body(dto);
     }
 
+    @Tag(name = "Metas User")
     @PutMapping(value = "/minhas/{id}")
     @Operation(summary = "[USER] Atualiza uma das minhas metas", description = "Atualiza uma meta existente do usuário autenticado a partir do seu ID.")
     public ResponseEntity<MetaDTO> updateMyMeta(@PathVariable UUID id, @RequestBody MetaDTO dto) {
@@ -75,6 +82,7 @@ public class MetaController {
         return ResponseEntity.ok().body(dto);
     }
 
+    @Tag(name = "Metas User")
     @DeleteMapping(value = "/minhas/{id}")
     @Operation(summary = "[USER] Deleta uma das minhas metas", description = "Remove uma meta existente do usuário autenticado a partir do seu ID.")
     public ResponseEntity<Void> deleteMyMeta(@PathVariable UUID id) {
