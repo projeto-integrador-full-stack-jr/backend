@@ -31,10 +31,12 @@ public class Usuario implements Serializable, UserDetails {
     private Email email;
 
     @Embedded
-    @AttributeOverride(name = "valor", column = @Column(name = "senha"))
+    @AttributeOverride(name = "valor", column = @Column(name = "senha", nullable = true))
     private Senha senha;
 
     private UserRole acesso;
+
+    private String imageUrl;
 
     @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
@@ -51,6 +53,13 @@ public class Usuario implements Serializable, UserDetails {
         this.acesso = acesso;
         this.email = email;
         this.senha = senha;
+    }
+
+    public Usuario(Email email, Senha senha, UserRole acesso, String imageUrl) {
+        this.acesso = acesso;
+        this.email = email;
+        this.senha = senha;
+        this.imageUrl = imageUrl;
     }
 
     public UUID getUsuarioId() {
@@ -87,6 +96,14 @@ public class Usuario implements Serializable, UserDetails {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @PrePersist

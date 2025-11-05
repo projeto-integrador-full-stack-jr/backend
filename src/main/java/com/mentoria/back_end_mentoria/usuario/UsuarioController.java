@@ -1,6 +1,9 @@
 package com.mentoria.back_end_mentoria.usuario;
 
 import com.mentoria.back_end_mentoria.security.TokenService;
+import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
+import com.mentoria.back_end_mentoria.usuario.vo.UsuarioRequest;
+import com.mentoria.back_end_mentoria.usuario.vo.UsuarioResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -28,19 +31,19 @@ public class UsuarioController {
     @Tag(name = "Usuários Admin")
     @GetMapping(value = "/listar")
     @Operation(summary = "[ADMIN] Lista todos os usuários", description = "Retorna uma lista de todos os usuários cadastrados no sistema. Requer perfil de ADMIN.")
-    public ResponseEntity<List<UsuarioDTO>> findAll() {
+    public ResponseEntity<List<UsuarioResponse>> findAll() {
         List<Usuario> lista = usuarioService.findAll();
-        List<UsuarioDTO> listaDTO = lista.stream().map(UsuarioDTO::new).toList();
+        List<UsuarioResponse> listaDTO = lista.stream().map(UsuarioResponse::new).toList();
         return ResponseEntity.ok().body(listaDTO);
     }
 
     @Tag(name = "Usuários Admin")
     @GetMapping("/{id}")
     @Operation(summary = "[ADMIN] Busca um usuário por ID", description = "Retorna os detalhes de um usuário específico a partir do seu ID. Requer perfil de ADMIN.")
-    public ResponseEntity<UsuarioDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioResponse> findById(@PathVariable UUID id) {
         Usuario usuario = usuarioService.findById(id);
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
-        return ResponseEntity.ok().body(usuarioDTO);
+        UsuarioResponse usuarioResponse = new UsuarioResponse(usuario);
+        return ResponseEntity.ok().body(usuarioResponse);
     }
 
     @Tag(name = "Acesso")
@@ -56,18 +59,19 @@ public class UsuarioController {
                     )
             )
     )
-    public ResponseEntity<UsuarioDTO> save(@RequestBody Usuario usuario) {
-        Usuario novoUsuario = usuarioService.save(usuario);
-        UsuarioDTO usuarioDTO = new UsuarioDTO(novoUsuario);
-        return ResponseEntity.ok().body(usuarioDTO);
+    public ResponseEntity<AuthUsuarioResponse> save(@RequestBody UsuarioRequest usuarioRequest) {
+        Usuario usuario = usuarioService.save(usuarioRequest);
+        UsuarioResponse usuarioResponse = new UsuarioResponse(usuario);
+        String novoToken = tokenService.gerarToken(usuario);
+        return ResponseEntity.ok().body(new AuthUsuarioResponse(usuarioResponse, novoToken));
     }
 
     @Tag(name = "Usuários Admin")
     @PutMapping("/{id}")
     @Operation(summary = "[ADMIN] Atualiza um usuário", description = "Atualiza os dados de um usuário existente a partir do seu ID. Requer perfil de ADMIN.")
-    public ResponseEntity<UsuarioDTO> update(@PathVariable UUID id, @RequestBody UsuarioDTO dto) {
-        Usuario usuarioAtualizado = usuarioService.update(id, dto);
-        return ResponseEntity.ok(new UsuarioDTO(usuarioAtualizado));
+    public ResponseEntity<UsuarioResponse> update(@PathVariable UUID id, @RequestBody UserRole acesso) {
+        UsuarioResponse usuarioAtualizado = usuarioService.update(id, acesso);
+        return ResponseEntity.ok(usuarioAtualizado);
     }
 
     @Tag(name = "Usuários Admin")
@@ -81,21 +85,19 @@ public class UsuarioController {
     @Tag(name = "Usuários User")
     @GetMapping("/eu")
     @Operation(summary = "[USER] Busca os dados do meu usuário", description = "Retorna os detalhes completos do usuário que está autenticado na sessão atual.")
-    public ResponseEntity<UsuarioDTO> getMyUser() {
+    public ResponseEntity<UsuarioResponse> getMyUser() {
         Usuario usuarioLogado = usuarioService.getUsuarioLogado();
-        return ResponseEntity.ok(new UsuarioDTO(usuarioLogado));
+        return ResponseEntity.ok(new UsuarioResponse(usuarioLogado));
     }
 
     @Tag(name = "Usuários User")
     @PutMapping("/eu")
     @Operation(summary = "[USER] Atualiza os dados do meu usuário", description = "Atualiza os dados do usuário autenticado. O ID é obtido pelo token de autenticação.")
-    public ResponseEntity<AuthResponseDTO> updateMyUser(@RequestBody UsuarioDTO dto) {
-        Usuario usuarioAtualizado = usuarioService.updateMyUser(dto);
-        String novoToken = tokenService.gerarToken(usuarioAtualizado);
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuarioAtualizado);
-
-        AuthResponseDTO response = new AuthResponseDTO(usuarioDTO, novoToken);
-
+    public ResponseEntity<AuthUsuarioResponse> updateMyUser(@RequestBody UsuarioRequest usuarioRequest) {
+        UsuarioResponse usuarioAtualizado = usuarioService.updateMyUser(usuarioRequest);
+        Usuario usuarioLogado = usuarioService.getUsuarioLogado();
+        String novoToken = tokenService.gerarToken(usuarioLogado);
+        AuthUsuarioResponse response = new AuthUsuarioResponse(usuarioAtualizado, novoToken);
         return ResponseEntity.ok(response);
     }
 
@@ -107,5 +109,5 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    public record AuthResponseDTO(UsuarioDTO usuario, String token) {}
+    public record AuthUsuarioResponse(UsuarioResponse usuario, String token) {}
 }

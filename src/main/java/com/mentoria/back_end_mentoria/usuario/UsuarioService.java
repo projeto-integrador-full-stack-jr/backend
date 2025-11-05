@@ -1,7 +1,7 @@
 package com.mentoria.back_end_mentoria.usuario;
 
 import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
-import com.mentoria.back_end_mentoria.usuario.vo.Senha;
+import com.mentoria.back_end_mentoria.usuario.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.usuario.vo.Email;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -32,15 +31,15 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Usuario save(Usuario usuario) {
-        if (usuario.getSenha() == null || usuario.getSenha().getValor() == null || usuario.getSenha().getValor().isBlank()) {
+    public Usuario save(UsuarioRequest NovoUsuario) {
+        if (NovoUsuario.getSenha() == null) {
             throw new IllegalArgumentException("A senha é obrigatória.");
         }
-        String password = usuario.getSenha().getValor();
+        String password = NovoUsuario.getSenha();
         Senha senhaValidadaECodificada = new Senha(password);
         String senhaCriptografada = passwordEncoder.encode(senhaValidadaECodificada.getValor());
         senhaValidadaECodificada.setValor(senhaCriptografada);
-        usuario.setSenha(senhaValidadaECodificada);
+        Usuario usuario = new Usuario(new Email(NovoUsuario.getEmail()), senhaValidadaECodificada, UserRole.USER);
         return usuarioRepository.save(usuario);
     }
 
@@ -49,37 +48,29 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario update(UUID id, UsuarioDTO dto) {
-        try {
-            Usuario entity = usuarioRepository.getReferenceById(id);
-            entity.setEmail(new Email(dto.getEmail()));
-            entity.setAcesso(dto.getAcesso());
-
-            if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-                String password = dto.getSenha();
-                Senha senhaValidadaECodificada = new Senha(password);
-                String senhaCriptografada = passwordEncoder.encode(senhaValidadaECodificada.getValor());
-                entity.getSenha().setValor(senhaCriptografada);
-            }
-
-            return usuarioRepository.save(entity);
-        } catch (EntityNotFoundException e) {
+    public UsuarioResponse update(UUID id, UserRole acesso) {
+        Usuario entity = usuarioRepository.getReferenceById(id);
+        if (entity == null) {
             throw new ResourceNotFoundException("Usuário não encontrado com o id: " + id);
         }
+        entity.setAcesso(acesso);
+        usuarioRepository.save(entity);
+        return new UsuarioResponse(entity);
     }
 
     @Transactional
-    public Usuario updateMyUser(UsuarioDTO dto) {
+    public UsuarioResponse updateMyUser(UsuarioRequest usuarioRequest) {
         Usuario entity = getUsuarioLogado();
 
-        entity.setEmail(new Email(dto.getEmail()));
+        entity.setEmail(new Email(usuarioRequest.getEmail()));
 
-        if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
-            String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+        if (usuarioRequest.getSenha() != null && !usuarioRequest.getSenha().isBlank()) {
+            String senhaCriptografada = passwordEncoder.encode(usuarioRequest.getSenha());
             entity.getSenha().setValor(senhaCriptografada);
         }
+        usuarioRepository.save(entity);
 
-        return usuarioRepository.save(entity);
+        return new UsuarioResponse(entity);
     }
 
     @Transactional

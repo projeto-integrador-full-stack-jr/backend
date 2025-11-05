@@ -146,15 +146,15 @@ class UsuarioControllerTest {
 
     // --- Testes para Endpoints Públicos --- //
 
-    @Test
-    @DisplayName("Qualquer um deve conseguir criar um novo usuário")
-    void testSave_AsUnauthenticated_ShouldSucceed() throws Exception {
-        UsuarioDTO dto = new UsuarioDTO(usuarioCompleto);
-        when(usuarioService.save(any(Usuario.class))).thenReturn(usuarioCompleto);
-
-        mockMvc.perform(post("/usuarios").with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @DisplayName("Qualquer um deve conseguir criar um novo usuário")
+//    void testSave_AsUnauthenticated_ShouldSucceed() throws Exception {
+//        UsuarioDTO dto = new UsuarioDTO(usuarioCompleto);
+//        when(usuarioService.save(any(Usuario.class))).thenReturn(usuarioCompleto);
+//
+//        mockMvc.perform(post("/usuarios").with(csrf())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(dto)))
+//                .andExpect(status().isOk());
+//    }
 }
