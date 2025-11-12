@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User; // NOVO IMPORT
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -16,11 +17,12 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_usuario", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class Usuario implements Serializable, UserDetails {
+public class Usuario implements Serializable, UserDetails, OAuth2User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,6 +47,10 @@ public class Usuario implements Serializable, UserDetails {
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant updatedAt;
+
+    // NOVO CAMPO: Atributos do OAuth2
+    @Transient // Não persistir no banco
+    private Map<String, Object> attributes;
 
     public Usuario() {
     }
@@ -128,7 +134,8 @@ public class Usuario implements Serializable, UserDetails {
 
     @Override
     public String getPassword() {
-        return this.senha.getValor();
+        // MODIFICADO: Retorna null se a senha não existir (caso do OAuth2)
+        return (this.senha != null) ? this.senha.getValor() : null;
     }
 
     @Override
@@ -154,5 +161,22 @@ public class Usuario implements Serializable, UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    // --- NOVOS MÉTODOS OAuth2User ---
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+
+    @Override
+    public String getName() {
+        // O Spring usa isso como ID do usuário OAuth. O e-mail é um bom candidato.
+        return this.email.getEmail();
     }
 }
