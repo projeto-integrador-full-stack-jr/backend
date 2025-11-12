@@ -3,8 +3,10 @@ package com.mentoria.back_end_mentoria.resumo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -75,6 +77,14 @@ public class ResumoController {
     }
 
     @Tag(name = "Resumos User")
+    @PostMapping(value = "/meus/cv", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "[USER] Upload de Currículo em PDF", description = "Faz o upload de um currículo em formato PDF para análise e extração de informações.")
+    public ResponseEntity<ResumoDTO> uploadPdf(@RequestParam("file") MultipartFile file) {
+        ResumoDTO newDto = resumoService.insertPDF(file);
+        return ResponseEntity.ok().body(newDto);
+    }
+
+    @Tag(name = "Resumos User")
     @DeleteMapping(value = "/meus/{id}")
     @Operation(summary = "[USER] Deleta um dos meus resumos", description = "Remove um resumo existente do usuário autenticado a partir do seu ID.")
     public ResponseEntity<Void> deleteMyResumo(@PathVariable UUID id) {
@@ -82,3 +92,4 @@ public class ResumoController {
         return ResponseEntity.noContent().build();
     }
 }
+    
