@@ -1,5 +1,7 @@
 package com.mentoria.back_end_mentoria.config;
 
+import com.mentoria.back_end_mentoria.security.CustomOidcUserService;
+import com.mentoria.back_end_mentoria.security.OAuth2LoginSuccessHandler;
 import com.mentoria.back_end_mentoria.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,13 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
+    // Injetar o novo serviço OIDC
+    @Autowired
+    private CustomOidcUserService customOidcUserService;
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
@@ -38,6 +47,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
+                    // Regras públicas para OAuth2
+                    req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
                     req.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
@@ -58,6 +69,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated();
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
+                    req.requestMatchers(HttpMethod.POST, "/resumos/meus/cv").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
 
                     req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
@@ -86,6 +98,13 @@ public class SecurityConfig {
 
                     req.anyRequest().authenticated();
                 })
+                // CONFIGURAÇÃO OAUTH2
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .oidcUserService(customOidcUserService)
+                        )
+                        .successHandler(oAuth2LoginSuccessHandler)
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -102,6 +121,8 @@ public class SecurityConfig {
                     req.requestMatchers(toH2Console()).permitAll();
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
+                    // Adicionado para testes (opcional, mas recomendado)
+                    req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
 
                     req.anyRequest().authenticated();
                 })

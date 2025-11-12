@@ -5,7 +5,7 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Conteudo {
-    @Column(length = 10000)
+    @Column(length = 20000)
     private String conteudo;
 
     public Conteudo() {
