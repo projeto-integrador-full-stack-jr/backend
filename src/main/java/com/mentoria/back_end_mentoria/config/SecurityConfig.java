@@ -3,6 +3,7 @@ package com.mentoria.back_end_mentoria.config;
 import com.mentoria.back_end_mentoria.security.CustomOidcUserService;
 import com.mentoria.back_end_mentoria.security.OAuth2LoginSuccessHandler;
 import com.mentoria.back_end_mentoria.security.SecurityFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +33,6 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
-    // Injetar o novo serviço OIDC
     @Autowired
     private CustomOidcUserService customOidcUserService;
 
@@ -46,8 +46,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou ausente");
+                }))
                 .authorizeHttpRequests(req -> {
-                    // Regras públicas para OAuth2
                     req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
                     req.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
@@ -68,6 +70,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated();
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
+                    req.requestMatchers(HttpMethod.GET, "/resumos/meus/{id}").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus/cv").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
@@ -98,7 +101,6 @@ public class SecurityConfig {
 
                     req.anyRequest().authenticated();
                 })
-                // CONFIGURAÇÃO OAUTH2
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .oidcUserService(customOidcUserService)
@@ -121,7 +123,6 @@ public class SecurityConfig {
                     req.requestMatchers(toH2Console()).permitAll();
                     req.requestMatchers(HttpMethod.POST, "/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                    // Adicionado para testes (opcional, mas recomendado)
                     req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
 
                     req.anyRequest().authenticated();
@@ -133,7 +134,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://projeto-mentoria.vercel.app", "http://localhost:5173/"));
+        configuration.setAllowedOrigins(Arrays.asList("https://projeto-mentoria.vercel.app", "http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
