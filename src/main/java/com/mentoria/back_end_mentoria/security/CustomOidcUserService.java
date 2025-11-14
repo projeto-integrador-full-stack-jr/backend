@@ -30,21 +30,15 @@ public class CustomOidcUserService extends OidcUserService {
     }
 
     private Usuario findOrCreateUser(String email, String imageUrl) {
-        // 1. Buscar o usuário
-        Usuario usuario = usuarioRepository.findByEmailEmail(email);
+        // CORREÇÃO: Alterado para findByEmail_Email
+        Usuario usuario = usuarioRepository.findByEmail_Email(email);
 
-        // 2. Verificar se o usuário existe
         if (usuario != null) {
-            // CORREÇÃO: A verificação agora é em 'usuario' (não 'userDetails')
-            // CORREÇÃO: A linha "usuario = (Usuario) userDetails;" foi removida.
-
-            // 3. Atualiza a imagem se ela mudou
             if (imageUrl != null && !imageUrl.equals(usuario.getImageUrl())) {
                 usuario.setImageUrl(imageUrl);
                 usuarioRepository.save(usuario);
             }
         } else {
-            // 4. Se não existe, cria um novo
             usuario = new Usuario(new Email(email), null, UserRole.USER, imageUrl);
             usuarioRepository.save(usuario);
         }

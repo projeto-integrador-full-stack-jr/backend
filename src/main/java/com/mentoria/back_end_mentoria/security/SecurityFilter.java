@@ -33,12 +33,9 @@ public class SecurityFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String token = extrairToken(request);
-
-        // Verifica se o token existe E se não há ninguém autenticado ainda
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             processarToken(token);
         }
-
         filterChain.doFilter(request, response);
     }
 
@@ -47,13 +44,12 @@ public class SecurityFilter extends OncePerRequestFilter {
             String email = tokenService.getSubject(token);
             logger.debug("Subject extraído do token: {}", email);
 
-            // Agora isso funciona, pois o repositório retorna Usuario
-            Usuario usuario = usuarioRepository.findByEmailEmail(email);
+            // CORREÇÃO: Alterado para findByEmail_Email
+            Usuario usuario = usuarioRepository.findByEmail_Email(email);
 
-            // Esta é a verificação de NULO que previne o erro 401
             if (usuario == null) {
                 logger.warn("Usuário não encontrado para email: {}", email);
-                return;  // Continua a cadeia sem autenticação
+                return;
             }
 
             logger.debug("Usuário encontrado: {}", usuario.getUsuarioId());
@@ -68,8 +64,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             logger.info("Autenticação definida para usuário: {}", email);
 
         } catch (Exception e) {
-            // Captura erros de token expirado, assinatura inválida, etc.
-            logger.error("Erro ao processar token: {}", e.getMessage());
+            logger.error("Erro ao processar token: {}", e.getMessage(), e);
         }
     }
 
