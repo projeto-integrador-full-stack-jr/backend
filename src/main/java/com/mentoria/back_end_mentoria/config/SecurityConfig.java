@@ -39,6 +39,9 @@ public class SecurityConfig {
     @Autowired
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
+    // =======================
+    // PROFILE PROD
+    // =======================
     @Bean
     @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
@@ -46,106 +49,101 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou ausente");
-                }))
-                .authorizeHttpRequests(req -> {
-                    req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
-                    req.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/usuarios/eu").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/eu").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/perfis/meu").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/perfis/meu").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/metas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/metas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/metas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/metas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/notas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/notas/minhas").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/resumos/meus/{id}").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
-                    req.requestMatchers(HttpMethod.POST, "/resumos/meus/cv").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
-
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/usuarios/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/perfis").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/perfis/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/perfis").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/perfis/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/perfis/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/metas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/metas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/metas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/metas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/metas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/notas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/notas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/notas").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/notas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/notas/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/resumos").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/resumos/{id}").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/resumos").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/resumos/{id}").hasRole("ADMIN");
-
-                    req.anyRequest().authenticated();
-                })
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .oidcUserService(customOidcUserService)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou ausente")
                         )
+                )
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/usuarios").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/usuarios/eu").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/eu").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/eu").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/perfis/meu").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/perfis/meu").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/perfis/meu").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/metas/minhas").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/metas/minhas").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/metas/minhas/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/metas/minhas/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/notas/minhas").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/notas/minhas").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/notas/minhas/{id}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/resumos/meus", "/resumos/meus/{id}").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/resumos/meus", "/resumos/meus/cv").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated()
+
+                        // ADMIN
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/perfis/**").hasRole("ADMIN")
+                        .requestMatchers("/metas/**").hasRole("ADMIN")
+                        .requestMatchers("/notas/**").hasRole("ADMIN")
+                        .requestMatchers("/resumos/**").hasRole("ADMIN")
+
+                        .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(customOidcUserService))
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
+    // =======================
+    // PROFILE TEST
+    // =======================
     @Bean
     @Profile("test")
     public SecurityFilterChain securityFilterChainTest(HttpSecurity http) throws Exception {
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console()).disable())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(toH2Console())
+                )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req -> {
-                    req.requestMatchers(toH2Console()).permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
-                    req.requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll();
-
-                    req.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers(toH2Console()).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/login", "/usuarios").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
+    // =======================
+    // CORS
+    // =======================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://projeto-mentoria.vercel.app", "http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://projeto-mentoria.vercel.app",
+                "http://localhost:5173"
+        ));
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
+        ));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
+    // =======================
+    // AUTH / PASSWORD
+    // =======================
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
