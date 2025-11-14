@@ -31,10 +31,19 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var subject = tokenService.getSubject(tokenJWT);
                 var usuario = usuarioRepository.findByEmailEmail(subject);
 
-                var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                // --- INÍCIO DA CORREÇÃO ---
+                // Verifica se o usuário extraído do token realmente existe no banco
+                if (usuario != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+                // Se 'usuario' for null, a autenticação simplesmente não é definida,
+                // mas também não lança um erro que é engolido.
+                // --- FIM DA CORREÇÃO ---
+
             } catch (RuntimeException e) {
-                // Token inválido ou expirado, o filtro simplesmente não faz nada e continua a cadeia.
+                // Token inválido ou expirado (assinatura, formato, etc.)
+                // O filtro simplesmente não faz nada e continua a cadeia.
                 // O usuário não será autenticado.
             }
         }
