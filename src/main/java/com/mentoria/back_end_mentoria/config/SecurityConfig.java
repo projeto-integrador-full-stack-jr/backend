@@ -39,9 +39,6 @@ public class SecurityConfig {
     @Autowired
     private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
-    // =======================
-    // PROFILE PROD
-    // =======================
     @Bean
     @Profile("prod")
     public SecurityFilterChain securityFilterChainProd(HttpSecurity http) throws Exception {
@@ -55,6 +52,7 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(req -> req
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login", "/usuarios").permitAll()
@@ -77,7 +75,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/resumos/meus", "/resumos/meus/cv").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated()
 
-                        // ADMIN
                         .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .requestMatchers("/perfis/**").hasRole("ADMIN")
                         .requestMatchers("/metas/**").hasRole("ADMIN")
@@ -94,9 +91,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    // =======================
-    // PROFILE TEST
-    // =======================
     @Bean
     @Profile("test")
     public SecurityFilterChain securityFilterChainTest(HttpSecurity http) throws Exception {
@@ -117,9 +111,6 @@ public class SecurityConfig {
                 .build();
     }
 
-    // =======================
-    // CORS
-    // =======================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -138,9 +129,6 @@ public class SecurityConfig {
         return source;
     }
 
-    // =======================
-    // AUTH / PASSWORD
-    // =======================
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
