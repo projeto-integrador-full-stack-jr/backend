@@ -43,7 +43,6 @@ class SecurityFilterTest {
 
     @BeforeEach
     void setUp() {
-        // Limpa o contexto de segurança antes de cada teste
         SecurityContextHolder.clearContext();
     }
 
@@ -56,15 +55,15 @@ class SecurityFilterTest {
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(tokenService.getSubject(token)).thenReturn(email);
-        when(usuarioRepository.findByEmailEmail(email)).thenReturn(usuarioMock);
+
+        // CORREÇÃO: Atualizado para findByEmail_Email
+        when(usuarioRepository.findByEmail_Email(email)).thenReturn(usuarioMock);
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        // Verifica se o usuário foi autenticado e está no contexto de segurança
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
         assertEquals(usuarioMock, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
-        // Verifica se o filtro continuou a cadeia
         verify(filterChain).doFilter(request, response);
     }
 
@@ -75,10 +74,7 @@ class SecurityFilterTest {
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        // Verifica se o contexto de segurança permanece vazio
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-
-        // Verifica se o filtro continuou a cadeia
         verify(filterChain).doFilter(request, response);
     }
 
@@ -88,15 +84,11 @@ class SecurityFilterTest {
         String token = "token_jwt_invalido";
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
-        // Simula o TokenService lançando uma exceção para um token inválido
         when(tokenService.getSubject(token)).thenThrow(new RuntimeException("Token inválido"));
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        // Verifica se o contexto de segurança permanece vazio
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-
-        // Verifica se o filtro continuou a cadeia
         verify(filterChain).doFilter(request, response);
     }
 
@@ -109,12 +101,8 @@ class SecurityFilterTest {
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
-        // Verifica se o contexto de segurança permanece vazio
         assertNull(SecurityContextHolder.getContext().getAuthentication());
-
-        // Verifica se o filtro continuou a cadeia
         verify(filterChain).doFilter(request, response);
-        // Garante que o tokenService nunca foi chamado
         verify(tokenService, never()).getSubject(any());
     }
 }

@@ -31,7 +31,8 @@ class AutenticacaoServiceTest {
         Usuario usuarioMock = new Usuario();
         usuarioMock.setEmail(new Email(email));
 
-        when(usuarioRepository.findByEmailEmail(email)).thenReturn(usuarioMock);
+        // CORREÇÃO: Atualizado para findByEmail_Email
+        when(usuarioRepository.findByEmail_Email(email)).thenReturn(usuarioMock);
 
         UserDetails userDetails = autenticacaoService.loadUserByUsername(email);
 
@@ -44,7 +45,8 @@ class AutenticacaoServiceTest {
     void testLoadUserByUsername_UserNotFound() {
         String email = "naoexiste@example.com";
 
-        when(usuarioRepository.findByEmailEmail(email)).thenReturn(null);
+        // CORREÇÃO: Atualizado para findByEmail_Email
+        when(usuarioRepository.findByEmail_Email(email)).thenReturn(null);
 
         assertThrows(UsernameNotFoundException.class, () -> autenticacaoService.loadUserByUsername(email));
     }

@@ -30,7 +30,7 @@ public class CustomOidcUserService extends OidcUserService {
     }
 
     private Usuario findOrCreateUser(String email, String imageUrl) {
-        // CORREÇÃO: Alterado para findByEmail_Email
+        // CORREÇÃO: Atualizado para findByEmail_Email
         Usuario usuario = usuarioRepository.findByEmail_Email(email);
 
         if (usuario != null) {

@@ -44,7 +44,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             String email = tokenService.getSubject(token);
             logger.debug("Subject extraído do token: {}", email);
 
-            // CORREÇÃO: Alterado para findByEmail_Email
+            // CORREÇÃO: Atualizado para findByEmail_Email
             Usuario usuario = usuarioRepository.findByEmail_Email(email);
 
             if (usuario == null) {
