@@ -38,7 +38,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
                 // Se 'usuario' for null, a autenticação simplesmente não é definida,
-                // mas também não lança um erro que é engolido.
                 // --- FIM DA CORREÇÃO ---
 
             } catch (RuntimeException e) {
