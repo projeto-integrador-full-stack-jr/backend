@@ -5,7 +5,6 @@ import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
 import com.mentoria.back_end_mentoria.usuario.vo.Email;
 import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails; // Import não é mais necessário para o método
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -31,17 +30,21 @@ public class CustomOidcUserService extends OidcUserService {
     }
 
     private Usuario findOrCreateUser(String email, String imageUrl) {
-        // CORREÇÃO: Removido o cast (UserDetails) pois o repositório agora retorna Usuario
+        // 1. Buscar o usuário
         Usuario usuario = usuarioRepository.findByEmailEmail(email);
 
-        if (userDetails != null) {
-            usuario = (Usuario) userDetails; // Esta linha não é mais necessária
+        // 2. Verificar se o usuário existe
+        if (usuario != null) {
+            // CORREÇÃO: A verificação agora é em 'usuario' (não 'userDetails')
+            // CORREÇÃO: A linha "usuario = (Usuario) userDetails;" foi removida.
 
+            // 3. Atualiza a imagem se ela mudou
             if (imageUrl != null && !imageUrl.equals(usuario.getImageUrl())) {
                 usuario.setImageUrl(imageUrl);
                 usuarioRepository.save(usuario);
             }
         } else {
+            // 4. Se não existe, cria um novo
             usuario = new Usuario(new Email(email), null, UserRole.USER, imageUrl);
             usuarioRepository.save(usuario);
         }
