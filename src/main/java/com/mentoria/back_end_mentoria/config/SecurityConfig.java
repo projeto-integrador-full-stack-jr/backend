@@ -58,6 +58,7 @@ public class SecurityConfig {
                     req.requestMatchers(HttpMethod.DELETE, "/notas/minhas/{id}").authenticated();
                     req.requestMatchers(HttpMethod.GET, "/resumos/meus").authenticated();
                     req.requestMatchers(HttpMethod.POST, "/resumos/meus").authenticated();
+                    req.requestMatchers(HttpMethod.POST, "/resumos/meus/cv").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/resumos/meus/{id}").authenticated();
 
                     req.requestMatchers(HttpMethod.GET, "/usuarios/listar").hasRole("ADMIN");

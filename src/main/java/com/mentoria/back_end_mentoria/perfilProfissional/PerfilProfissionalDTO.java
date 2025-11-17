@@ -1,6 +1,6 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
-import com.mentoria.back_end_mentoria.meta.MetaDTO;
+import com.mentoria.back_end_mentoria.meta.vo.MetaDTO;
 import com.mentoria.back_end_mentoria.nota.NotaDTO;
 import com.mentoria.back_end_mentoria.resumo.ResumoDTO;
 

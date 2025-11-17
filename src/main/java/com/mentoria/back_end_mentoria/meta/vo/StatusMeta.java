@@ -2,9 +2,10 @@ package com.mentoria.back_end_mentoria.meta.vo;
 
 public enum StatusMeta {
 
-    PENDENTE(1),
+    AGUARDANDO(1),
     EM_ANDAMENTO(2),
-    CONCLUIDO(3);
+    CONCLUIDO(3),
+    EXPIRADA(4);
 
     private int status;
 

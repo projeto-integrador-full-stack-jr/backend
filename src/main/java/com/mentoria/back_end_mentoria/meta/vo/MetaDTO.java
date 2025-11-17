@@ -1,6 +1,6 @@
-package com.mentoria.back_end_mentoria.meta;
+package com.mentoria.back_end_mentoria.meta.vo;
 
-import com.mentoria.back_end_mentoria.meta.vo.StatusMeta;
+import com.mentoria.back_end_mentoria.meta.Meta;
 
 import java.io.Serializable;
 import java.time.Instant;

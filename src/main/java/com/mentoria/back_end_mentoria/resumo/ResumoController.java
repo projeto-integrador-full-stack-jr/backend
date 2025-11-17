@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -71,6 +72,14 @@ public class ResumoController {
     @Operation(summary = "[USER] Gera um novo resumo para mim", description = "Gera um novo resumo de carreira via IA para o usuário autenticado.")
     public ResponseEntity<ResumoDTO> insertMyResumo() {
         ResumoDTO newDto = resumoService.insertMyResumo();
+        return ResponseEntity.ok().body(newDto);
+    }
+
+    @Tag(name = "Resumos User")
+    @PostMapping(value = "/meus/cv")
+    @Operation(summary = "[USER] Upload de Currículo em PDF", description = "Faz o upload de um currículo em formato PDF para análise e extração de informações.")
+    public ResponseEntity<ResumoDTO> uploadPdf(@RequestParam("file") MultipartFile file) {
+        ResumoDTO newDto = resumoService.insertPDF(file);
         return ResponseEntity.ok().body(newDto);
     }
 
