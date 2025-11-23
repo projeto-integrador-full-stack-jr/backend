@@ -29,9 +29,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run:
-          if [ -d "backend" ]; then
-            cd backend
-          fi
+          ls -la
           
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           
