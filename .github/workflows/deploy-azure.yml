@@ -28,13 +28,28 @@ jobs:
         run: az acr login --name ${{ env.ACR_NAME }}
 
       - name: Build and Push Docker Image
-        run:
+        run: |
+          # --- COMANDO UNIVERSAL ---
+          # Verifica se existe uma pasta 'backend'. Se existir, entra nela.
+          # Se não existir, assume que os arquivos já estão na raiz.
+          if [ -d "backend" ]; then
+            echo "Pasta 'backend' encontrada. Entrando nela..."
+            cd backend
+          else
+            echo "Pasta 'backend' não encontrada. Rodando na raiz..."
+          fi
+          
+          # Imprime o diretório atual para debug
           ls -la
           
+          # Constrói a imagem usando o contexto atual (.)
+          # Isso encontra o Dockerfile onde quer que estejamos (raiz ou pasta backend)
           docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           
+          # Envia a imagem específica do commit
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           
+          # Cria e envia a tag 'latest'
           docker tag ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
 
