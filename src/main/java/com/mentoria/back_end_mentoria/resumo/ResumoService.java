@@ -9,9 +9,13 @@ import com.mentoria.back_end_mentoria.vog.Titulo;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +53,32 @@ public class ResumoService {
         return new ResumoDTO(entity);
     }
 
+    @Transactional
+    public ResumoDTO insert(UUID perfilProfissionalId) {
+        PerfilProfissional perfil = perfilProfissionalRepository.findById(perfilProfissionalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado"));
+
+        Resumo entity = new Resumo();
+        entity.setPerfilProfissional(perfil);
+
+        gerarConteudoComIA(perfil, entity, null);
+
+        entity = resumoRepository.save(entity);
+        return new ResumoDTO(entity);
+    }
+
+    @Transactional
+    public void delete(UUID id) {
+        if (!resumoRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
+        }
+        resumoRepository.deleteById(id);
+    }
+
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     @Transactional(readOnly = true)
     public List<ResumoDTO> findMyResumos() {
         Usuario usuarioLogado = getUsuarioLogado();
@@ -76,17 +106,18 @@ public class ResumoService {
     }
 
     @Transactional
-    public ResumoDTO insert(UUID perfilProfissionalId) {
-        PerfilProfissional perfil = perfilProfissionalRepository.findById(perfilProfissionalId)
-                .orElseThrow(() -> new ResourceNotFoundException("Perfil Profissional não encontrado"));
+    public void deleteMyResumo(UUID resumoId) {
+        Usuario usuarioLogado = getUsuarioLogado();
+        Resumo entity = resumoRepository.findById(resumoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
 
-        Resumo entity = new Resumo();
-        entity.setPerfilProfissional(perfil);
+        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
 
-        gerarConteudoComIA(perfil, entity, null);
+        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
+            throw new AccessDeniedException("Acesso negado. Você só pode apagar seus próprios resumos.");
+        }
 
-        entity = resumoRepository.save(entity);
-        return new ResumoDTO(entity);
+        resumoRepository.deleteById(resumoId);
     }
 
     @Transactional
@@ -126,34 +157,6 @@ public class ResumoService {
         }
     }
 
-    @Transactional
-    public void delete(UUID id) {
-        if (!resumoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Resumo não encontrado com o id: " + id);
-        }
-        resumoRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void deleteMyResumo(UUID resumoId) {
-        Usuario usuarioLogado = getUsuarioLogado();
-
-        Resumo entity = resumoRepository.findById(resumoId)
-                .orElseThrow(() -> new ResourceNotFoundException("Resumo não encontrado com o id: " + resumoId));
-
-        UUID idDonoDoResumo = entity.getPerfilProfissional().getUsuario().getUsuarioId();
-
-        if (!usuarioLogado.getUsuarioId().equals(idDonoDoResumo)) {
-            throw new AccessDeniedException("Acesso negado. Você só pode apagar seus próprios resumos.");
-        }
-
-        resumoRepository.deleteById(resumoId);
-    }
-
-    private Usuario getUsuarioLogado() {
-        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
     private String extratorExperienciaProfissionalDoCurriculo(String textPDFCru) {
         if (textPDFCru == null || textPDFCru.isEmpty()) {
             throw new IllegalArgumentException("O texto extraído do currículo está com algum problema.");
@@ -162,19 +165,23 @@ public class ResumoService {
         Map<String, Object> params = Map.of(
                 "conteudo_curriculo", textPDFCru
         );
-        Prompt prompt = promptTemplate.create(params);
-        return chatModel.call(prompt).getResult().getOutput().getText();
+        ChatOptions options = OpenAiChatOptions.builder()
+                .model("gpt-4.1-nano")
+                .temperature(0.5)
+                .build();
+        Message message = (promptTemplate.create(params)).getUserMessage();
+        ChatResponse chatResponse = chatModel.call(new Prompt(message, options));
+        return chatResponse.getResult().getOutput().getText();
     }
 
     private void gerarConteudoComIA(PerfilProfissional perfil, Resumo resumo, String experienciaCurriculo) {
         String cargo = perfil.getCargo();
         String experiencia = perfil.getExperiencia();
-        if (experienciaCurriculo != null) {
+        if (experienciaCurriculo != null && !experienciaCurriculo.isBlank()) {
             experiencia = experienciaCurriculo;
         }
         String objetivoProfissional = perfil.getObjetivoPrincipal();
         String nome_completo = perfil.getNomeUsuario();
-
         String tituloTexto = StringUtils.hasText(cargo) ? "Resumo sobre " + cargo : "Resumo de Carreira";
         resumo.setTitulo(new Titulo(tituloTexto));
 
@@ -182,137 +189,89 @@ public class ResumoService {
         Map<String, Object> params = Map.of(
                 "cargo", StringUtils.hasText(cargo) ? cargo : "não informado",
                 "experiencia", StringUtils.hasText(experiencia) ? experiencia : "não informada",
-                "objetivoProfissional", objetivoProfissional,
-                "nome_completo", nome_completo
-
+                "objetivoProfissional", StringUtils.hasText(objetivoProfissional) ? objetivoProfissional : "não informado",
+                "nome_completo", StringUtils.hasText(nome_completo) ? nome_completo : "Candidato"
         );
+        Message message = (promptTemplate.create(params)).getUserMessage();
+        ChatOptions options = OpenAiChatOptions.builder()
+                .model("gpt-4.1")
+                .temperature(0.6)
+                .build();
 
-        Prompt prompt = promptTemplate.create(params);
-        String conteudoGerado = chatModel.call(prompt).getResult().getOutput().getText();
+        ChatResponse response = chatModel.call(new Prompt(message, options));
+
+        String conteudoGerado = response.getResult().getOutput().getText();
+        if (conteudoGerado == null) conteudoGerado = "";
+        conteudoGerado = conteudoGerado.replace("```", "");
+        conteudoGerado = conteudoGerado.replace("\\n", " ");
+        conteudoGerado = conteudoGerado.replace("\r", " ");
+        conteudoGerado = conteudoGerado.replaceFirst("^\\s*html\\s*", "");
+        conteudoGerado = conteudoGerado.trim();
         resumo.setConteudo(new Conteudo(conteudoGerado));
     }
 
-    private String templateCurriculoInstrucoes = """
-            Você deve ler os dados do seguinte texto: {conteudo_curriculo}, isso deve ser um extração de dados de um currículo, seu
-            objetivo é extrair todas as experiencias profissionais da pessoa e ignorar todo o resto e a resposta do prompt deve ser somente
-            os dados experiencias profissionais."
+    private final String templateCurriculoInstrucoes = """
+            Leia o texto a seguir: {conteudo_curriculo}.
+            Extraia **apenas** as experiências profissionais presentes no currículo.
+            Ignore qualquer informação que não seja experiência profissional.
+            A resposta deve conter **somente** os dados das experiências profissionais, sem comentários adicionais.
             """;
 
-    private String template = """
+    private final String template = """
             [INÍCIO DO PROMPT]
             
-                PERSONA:
+            PERSONA:
+            Você é um especialista em carreira e mentor de elite, focado em desenvolver profissionais de tecnologia. Sua comunicação é estratégica, motivacional e baseada em dados.
             
-                Você é um especialista em carreira e mentor de elite, especializado em acelerar o desenvolvimento de profissionais no setor de tecnologia. Sua comunicação é estratégica, motivacional e baseada em dados.
+            OBJETIVO PRINCIPAL:
+            Gerar um único documento HTML puro, contendo um plano de carreira estruturado. A resposta deve ser SOMENTE o código HTML, sem explicações, sem comentários e sem bloco de código (sem ```).
             
-                OBJETIVO PRINCIPAL:
+            PARÂMETROS DE ENTRADA (OBRIGATÓRIOS):
+            {nome_completo}: Nome completo do profissional.
+            {experiencia}: Tempo de experiência.
+            {cargo}: Cargo atual do profissional.
+            {objetivoProfissional}: Onde a pessoa deseja chegar (objetivo profissional ou bio futura).
             
-                Gerar um documento HTML puro, servindo como um plano de carreira acionável e altamente personalizado. A saída deve ser um bloco de código HTML limpo, sem qualquer texto ou explicação adicional fora do código.
+            REGRAS ESTRITAS DE HTML:
+            - Todo o conteúdo deve estar DENTRO de uma única tag <div>.
+            - Não usar <html>, <head>, <body>, ou qualquer tag fora: <div>, <h1>, <h2>, <p>.
+            - Nenhum atributo é permitido (sem class, id, style).
+            - Nenhum comentário HTML é permitido.
+            - A ordem das tags deve seguir exatamente o modelo abaixo.
+            - A saída deve ser um ÚNICO parágrafo contínuo, SEM QUEBRAS DE LINHA, SEM \n, SEM \r.
+            - O modelo abaixo indica a sequência obrigatória:
             
-                PARÂMETROS DE ENTRADA (OBRIGATÓRIOS):
+            <div>
+            <p>Saudação inicial...</p>
+            <h1>{nome_completo}</h1>
+            <p>Cargo Atual: {cargo}</p>
+            <p>Objetivo: {objetivoProfissional}</p>
+            <h2>Resumo Estratégico</h2>
+            <p>Texto...</p>
+            <h2>Fase 01: Fundamentos e Aprofundamento Técnico</h2>
+            <p>Duração: 1–2 anos</p>
+            <p>Texto...</p>
+            <h2>Fase 02: Expansão de Influência e Networking Estratégico</h2>
+            <p>Duração: 1–2 anos</p>
+            <p>Texto...</p>
+            <h2>Fase 03: Liderança e Geração de Relevância</h2>
+            <p>Duração: 1–2 anos</p>
+            <p>Texto...</p>
+            </div>
             
-                {nome_completo}: Nome completo do profissional.
-                {experiencia}: Tempo de experiência (número inteiro de anos).
-                {cargo}: Cargo atual do profissional.
-                {objetivoProfissional}: Onde a pessoa deseja chegar (objetivo profissional ou bio futura).
+            REGRAS DE CONTEÚDO:
+            - Saudação: parágrafo único, citando {nome_completo} e explicando que é um plano para atingir {objetivoProfissional}.
+            - Resumo Estratégico: 200 a 300 palavras, analisando {experiencia}, {cargo}, pontos fortes e conexão com o objetivo.
+            - Fase 01: 250 a 400 palavras, focada em base técnica, tecnologias, certificações e portfólio.
+            - Fase 02: 250 a 400 palavras, focada em networking, comunidades, artigos, palestras e open-source.
+            - Fase 03: 250 a 400 palavras, focada em liderança, mentoring, decisões técnicas e visão estratégica.
             
-                REGRAS DE ESTRUTURA HTML (RÍGIDAS E IMUTÁVEIS):
+            REGRAS FINAIS (CRÍTICAS):
+            - A resposta deve ser SOMENTE o HTML puro.
+            - NÃO iniciar com "html", não colocar "```".
+            - NÃO gerar nenhum "\n" ou quebra de linha. O HTML deve vir em uma única linha contínua.
+            - NÃO incluir explicações, avisos, comentários ou textos fora do <div>.
             
-                O documento inteiro deve estar contido dentro de uma única tag <div>. Nenhuma tag (<html>, <head>, <body>) deve ser usada.
-            
-                A sequência exata das tags deve ser seguida conforme o modelo abaixo.
-            
-                Tags permitidas: <div>, h1, h2, p.
-            
-                Tags estritamente proibidas: Quaisquer outras tags, incluindo, mas não se limitando a section, header, strong, em, ul, li.
-            
-                Nenhum atributo HTML é permitido (ex: class, id, style).
-            
-                A saída não deve conter NENHUM comentário HTML (``).
-            
-                MODELO DE ESTRUTURA HTML:
-            
-                HTML
-            
-                <div>
-            
-                 <p>Saudação inicial...</p>
-            
-                 <h1>{nome_completo}</h1>
-            
-                 <p>Cargo Atual: {cargo}</p>
-            
-                 <p>Objetivo: {objetivoProfissional}</p>
-            
-                 <h2>Resumo Estratégico</h2>
-            
-                 <p>Análise do perfil atual...</p>
-            
-                 <h2>Fase 01: Fundamentos e Aprofundamento Técnico</h2>
-            
-                 <p>Duração: 1–2 anos</p>
-            
-                 <p>Descrição detalhada da Fase 01...</p>
-            
-                 <h2>Fase 02: Expansão de Influência e Networking Estratégico</h2>
-            
-                 <p>Duração: 1–2 anos</p>
-            
-                 <p>Descrição detalhada da Fase 02...</p>
-            
-                 <h2>Fase 03: Liderança e Geração de Relevância</h2>
-            
-                 <p>Duração: 1–2 anos</p>
-            
-                 <p>Descrição detalhada da Fase 03...</p></div>
-            
-                REGRAS DE CONTEÚDO E TOM (DETALHADAS):
-            
-                Tom Geral: Profissional, direto, encorajador e realista. Use uma linguagem ativa e focada em ações. A personalização deve conectar explicitamente o {cargo} e a {experiencia} ao {objetivoProfissional}.
-            
-                Saudação Inicial:
-            
-                Deve ser um parágrafo único.
-            
-                Mencionar o {nome_completo} pelo nome.
-            
-                Explicar que o documento é um plano de carreira estruturado para atingir o {objetivoProfissional}.
-            
-                Resumo Estratégico:
-            
-                Contagem de Palavras: Entre 200 e 300 palavras.
-            
-                Conteúdo Obrigatório: Deve analisar como a {experiencia} e o {cargo} formam uma base sólida. Identificar 2 a 3 pontos fortes observáveis. Conectar diretamente as habilidades atuais com os pré-requisitos para alcançar o {objetivoProfissional}.
-            
-                Fase 01: Fundamentos e Aprofundamento Técnico:
-            
-                Contagem de Palavras: Entre 250 e 400 palavras.
-            
-                Conteúdo Obrigatório: Focar em fortalecimento técnico. Deve sugerir a busca por certificações relevantes para o {objetivoProfissional}, o aprofundamento em 1-2 tecnologias-chave (linguagens, frameworks, plataformas) e a criação de projetos de portfólio que demonstrem maestria.
-            
-                Fase 02: Expansão de Influência e Networking Estratégico:
-            
-                Contagem de Palavras: Entre 250 e 400 palavras.
-            
-                Conteúdo Obrigatório: Focar em habilidades interpessoais e visibilidade. Deve detalhar ações como: participar ativamente de 2 a 3 comunidades técnicas (online ou offline), palestrar em meetups, escrever artigos técnicos e colaborar em projetos open-source. O objetivo é construir uma marca pessoal alinhada ao {objetivoProfissional}.
-            
-                Fase 03: Liderança e Geração de Relevância:
-            
-                Contagem de Palavras: Entre 250 e 400 palavras.
-            
-                Conteúdo Obrigatório: Focar na transição de contribuidor para líder ou referência. Deve abordar tópicos como: assumir a liderança técnica de projetos, mentorar profissionais juniores, influenciar decisões de tecnologia na empresa e desenvolver uma visão estratégica que gere impacto direto no negócio.
-            
-                REGRAS DE SAÍDA (CRÍTICAS):
-            
-                A resposta deve ser APENAS o bloco de código HTML.
-            
-                Não inclua html no início ou no final.
-                Restrição de Formato: O parágrafo de conteúdo não deve conter nenhum caractere de espaço e quebra de linha. O texto deve ser um bloco único e contínuo NAO QUEBRE A LINHA.
-            
-                NAO QUEBRE A LINHA. (IMPORTANTE)
-            
-                Não inclua nenhuma frase introdutória, explicação, cabeçalho ou despedida. A sua única e exclusiva saída deve ser o código.
-            
-                [FIM DO PROMPT]
+            [FIM DO PROMPT]
             """;
 }
