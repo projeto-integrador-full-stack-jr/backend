@@ -1,4 +1,4 @@
-name: Build and Deploy Mentori-IA App to Azure
+name: Build and Deploy Docker to Azure
 
 on:
   push:
@@ -8,54 +8,57 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: app-mentori-ia-prod
-  JAVA_VERSION: '21'
+  ACR_NAME: acrmentoriaiaprod
+  IMAGE_NAME: backend-mentoria
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout do código
         uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: ${{ env.JAVA_VERSION }}
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
-
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set Azure App Service settings
+      - name: Login no ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build e Push da Imagem Docker
+        run: |
+        
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} -f backend/Dockerfile backend/
+          
+          
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          
+          docker tag ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:latest
+
+      - name: Configurar Variáveis de Ambiente
         run: |
           az webapp config appsettings set \
             --name ${{ env.AZURE_WEBAPP_NAME }} \
             --resource-group "${{ secrets.AZURE_RESOURCE_GROUP }}" \
             --settings \
-              SPRING_PROFILES_ACTIVE="${{ secrets.SPRING_PROFILES_ACTIVE }}" \
+              SPRING_PROFILES_ACTIVE="prod" \
               SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
               SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
               SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
               API_SECURITY_TOKEN_SECRET="${{ secrets.API_SECURITY_TOKEN_SECRET }}" \
-              OPENAI_KEY="${{ secrets.OPENAI_KEY }}"
+              OPENAI_KEY="${{ secrets.OPENAI_KEY }}" \
+              GOOGLE_ID="${{ secrets.GOOGLE_ID }}" \
+              GOOGLE_SECRET="${{ secrets.GOOGLE_SECRET }}" \
+              WEBSITES_PORT=8080
 
-      - name: Deploy to Azure App Service
+      - name: Deploy no Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: ./target/back-end-mentoria-0.0.1-SNAPSHOT.jar
+          images: ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-      - name: Azure Logout
+      - name: Logout
         run: az logout
