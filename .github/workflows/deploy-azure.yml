@@ -27,11 +27,13 @@ jobs:
       - name: Login no ACR
         run: az acr login --name ${{ env.ACR_NAME }}
 
-      - name: Build e Push da Imagem Docker
-        run: |
-        
-          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} -f backend/Dockerfile backend/
+      - name: Build and Push Docker Image
+        run:
+          if [ -d "backend" ]; then
+            cd backend
+          fi
           
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }} .
           
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}
           
