@@ -1,0 +1,25 @@
+package com.mentoria.back_end_mentoria.domain.vog;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
+public class Conteudo {
+    @Column(length = 10000)
+    private String conteudo;
+
+    public Conteudo() {
+    }
+
+    public Conteudo(String value) {
+        this.conteudo = value;
+    }
+
+    public String getConteudo() {
+        return conteudo;
+    }
+
+    public void setConteudo(String conteudo) {
+        this.conteudo = conteudo;
+    }
+}

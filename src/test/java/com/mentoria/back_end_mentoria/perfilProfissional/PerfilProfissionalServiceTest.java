@@ -1,8 +1,12 @@
 package com.mentoria.back_end_mentoria.perfilProfissional;
 
-import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissional;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissionalDTO;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissionalService;
+import com.mentoria.back_end_mentoria.infrastructure.exception.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.usuario.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

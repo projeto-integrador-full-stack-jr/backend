@@ -1,9 +1,14 @@
 package com.mentoria.back_end_mentoria.resumo;
 
-import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
-import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
-import com.mentoria.back_end_mentoria.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.vog.Conteudo;
+import com.mentoria.back_end_mentoria.domain.vog.Titulo;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissional;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.domain.resumo.Resumo;
+import com.mentoria.back_end_mentoria.domain.resumo.ResumoDTO;
+import com.mentoria.back_end_mentoria.domain.resumo.ResumoRepository;
+import com.mentoria.back_end_mentoria.domain.resumo.ResumoService;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,8 +80,8 @@ class ResumoServiceTest {
         resumo = new Resumo();
         resumo.setResumoId(resumoId);
         resumo.setPerfilProfissional(perfilProfissional);
-        resumo.setTitulo(new com.mentoria.back_end_mentoria.vog.Titulo("Título Teste"));
-        resumo.setConteudo(new com.mentoria.back_end_mentoria.vog.Conteudo("Conteúdo Teste"));
+        resumo.setTitulo(new Titulo("Título Teste"));
+        resumo.setConteudo(new Conteudo("Conteúdo Teste"));
 
         resumoDTO = new ResumoDTO(resumo);
     }

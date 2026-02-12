@@ -1,9 +1,10 @@
 package com.mentoria.back_end_mentoria.security;
 
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.usuario.vo.Email;
-import com.mentoria.back_end_mentoria.usuario.vo.Senha;
-import com.mentoria.back_end_mentoria.usuario.vo.UserRole;
+import com.mentoria.back_end_mentoria.infrastructure.security.TokenService;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.usuario.vo.Email;
+import com.mentoria.back_end_mentoria.domain.usuario.vo.Senha;
+import com.mentoria.back_end_mentoria.domain.usuario.vo.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

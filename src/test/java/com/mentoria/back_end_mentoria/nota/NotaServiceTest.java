@@ -1,11 +1,15 @@
 package com.mentoria.back_end_mentoria.nota;
 
-import com.mentoria.back_end_mentoria.handler.ResourceNotFoundException;
-import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissional;
-import com.mentoria.back_end_mentoria.perfilProfissional.PerfilProfissionalRepository;
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.vog.Conteudo;
-import com.mentoria.back_end_mentoria.vog.Titulo;
+import com.mentoria.back_end_mentoria.domain.nota.Nota;
+import com.mentoria.back_end_mentoria.domain.nota.NotaDTO;
+import com.mentoria.back_end_mentoria.domain.nota.NotaRepository;
+import com.mentoria.back_end_mentoria.domain.nota.NotaService;
+import com.mentoria.back_end_mentoria.infrastructure.exception.ResourceNotFoundException;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissional;
+import com.mentoria.back_end_mentoria.domain.perfilProfissional.PerfilProfissionalRepository;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.vog.Conteudo;
+import com.mentoria.back_end_mentoria.domain.vog.Titulo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

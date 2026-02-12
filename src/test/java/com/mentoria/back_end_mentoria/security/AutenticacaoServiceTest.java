@@ -1,8 +1,9 @@
 package com.mentoria.back_end_mentoria.security;
 
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
-import com.mentoria.back_end_mentoria.usuario.vo.Email;
+import com.mentoria.back_end_mentoria.infrastructure.security.AutenticacaoService;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.domain.usuario.vo.Email;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

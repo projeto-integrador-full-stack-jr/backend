@@ -1,7 +1,9 @@
 package com.mentoria.back_end_mentoria.security;
 
-import com.mentoria.back_end_mentoria.usuario.Usuario;
-import com.mentoria.back_end_mentoria.usuario.UsuarioRepository;
+import com.mentoria.back_end_mentoria.infrastructure.security.SecurityFilter;
+import com.mentoria.back_end_mentoria.infrastructure.security.TokenService;
+import com.mentoria.back_end_mentoria.domain.usuario.Usuario;
+import com.mentoria.back_end_mentoria.domain.usuario.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

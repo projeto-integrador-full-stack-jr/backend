@@ -1,0 +1,14 @@
+package com.mentoria.back_end_mentoria.domain.perfilProfissional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public interface PerfilProfissionalRepository extends JpaRepository<PerfilProfissional, UUID> {
+
+    Optional<PerfilProfissional> findByUsuarioUsuarioId(UUID id);
+
+    void deleteByUsuario_UsuarioId(UUID usuarioId);
+
+}
